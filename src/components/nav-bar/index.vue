@@ -1,11 +1,25 @@
 <template>
   <section class="navbar">
+    <!-- <p>hello world</p> -->
     <div
       :class="{
         'navbar-left': true,
-        'navbar-left-padding': $store.state.menu.isLock,
+        'navbar-left-padding': true, // nanti diganti ke store
       }"
-    ></div>
+    >
+      <!-- menu button -->
+      <div
+        class="nav_menu"
+        v-show="!$route.meta.showLogo"
+        @click="toggleMenuShow(true)"
+      >
+        <a href="#"></a>
+      </div>
+      <!-- show logo -->
+      <div class="detail_page_logo" v-show="$route.meta.showLogo"></div>
+      <!-- show page title -->
+      <div class="nav_page_title">PETTY CASH</div>
+    </div>
   </section>
 </template>
 
@@ -16,5 +30,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// @import "index";
+@import "index";
 </style>
