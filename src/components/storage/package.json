@@ -1,0 +1,59 @@
+{
+  "_args": [
+    [
+      "storage@1.1.0",
+      "F:\\workspace\\indonesia\\h5-ynhw-rcd-ui"
+    ]
+  ],
+  "_from": "storage@1.1.0",
+  "_id": "storage@1.1.0",
+  "_inBundle": false,
+  "_integrity": "sha1-m216EmutdiqhO0Phxe9VyUk0apE=",
+  "_location": "/storage",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "storage@1.1.0",
+    "name": "storage",
+    "escapedName": "storage",
+    "rawSpec": "1.1.0",
+    "saveSpec": null,
+    "fetchSpec": "1.1.0"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "http://test.nexus.ql.corp/repository/npm_grp/storage/-/storage-1.1.0.tgz",
+  "_spec": "1.1.0",
+  "_where": "F:\\workspace\\indonesia\\h5-ynhw-rcd-ui",
+  "author": {
+    "name": "Wang Xiao",
+    "email": "wanngxiao@gmail.com",
+    "url": "http://muyao.me"
+  },
+  "browserslist": [
+    "iOS >= 7",
+    "Android >= 4.1",
+    "ie <= 8"
+  ],
+  "description": "storage 封装",
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^7.0.0",
+    "babel-preset-env": "^1.4.0",
+    "webpack": "^2.5.1"
+  },
+  "license": "ISC",
+  "main": "dist/storage.js",
+  "name": "storage",
+  "publishConfig": {
+    "registry": "http://test.nexus.ql.corp/nexus/content/repositories/npm_Releases/"
+  },
+  "scripts": {
+    "build": "webpack --progress --colors",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.1.0"
+}

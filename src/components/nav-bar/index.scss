@@ -1,0 +1,224 @@
+.el-form-item {
+  margin-bottom: 30px;
+}
+
+.navbar {
+  background-color: #3a4954;
+  height: 72px;
+  padding: 0 24px;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+}
+
+.navbar-left {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+}
+.navbar-left-padding {
+  padding-left: 260px;
+}
+.nav_menu {
+  width: 36px;
+  height: 72px;
+  background-image: url("~@/assets/img/icon_menu.png");
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 24px 24px;
+  cursor: pointer;
+  a {
+    height: 72px;
+    width: 100%;
+    display: block;
+  }
+}
+.nav_page_title {
+  height: 72px;
+  line-height: 72px;
+  font-size: 18px;
+  margin-left: 36px;
+}
+
+.navbar-right {
+  display: flex;
+  //justify-content: space-between;
+}
+.language {
+  font-size: 16px;
+  line-height: 72px;
+  height: 72px;
+  width: 100px;
+  text-align: right;
+  position: relative;
+  z-index: 5;
+  //display: inline-block;
+  a {
+    display: block;
+    color: #fff;
+    height: 72px;
+  }
+  &:hover {
+    .language_list_card {
+      display: block;
+    }
+  }
+}
+
+.language_list_card {
+  display: none;
+  width: 120px;
+  position: absolute;
+  top: 100%;
+  right: -10px;
+  transform: translateY(-10px);
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.1);
+}
+.language_list_icon {
+  position: absolute;
+  top: -18px;
+  right: 3px;
+  font-size: 30px;
+}
+.language_list {
+  background-color: #fff;
+  border-radius: 6px;
+  width: 100%;
+  overflow: hidden;
+  li {
+    a {
+      display: block;
+      color: #2f3030;
+      height: 44px;
+      line-height: 44px;
+      font-size: 14px;
+      text-align: center;
+      &:hover {
+        color: #52a0db;
+      }
+    }
+  }
+}
+.user_info {
+  margin-left: 48px;
+  display: flex;
+  align-items: center;
+  height: 72px;
+  .photo {
+    height: 48px;
+    width: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    background-image: url("~@/assets/img/photo_logo.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center center;
+  }
+  .user_info_card {
+    margin-left: 8px;
+    position: relative;
+    z-index: 5;
+    .user_info_name {
+      display: block;
+      height: 72px;
+      line-height: 72px;
+      color: #fff;
+    }
+  }
+  &:hover {
+    .user_operation_card {
+      display: block;
+    }
+  }
+}
+.user_operation_card {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: -10px;
+  min-width: 150px;
+  transform: translateY(-10px);
+}
+.user_operation_list {
+  border-radius: 6px;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  li {
+    padding: 0 12px;
+    a {
+      background-size: 24px 24px;
+      background-position: 0 center;
+      background-repeat: no-repeat;
+      border-bottom: 1px solid #e5e8e8;
+      color: #2f3030;
+      display: block;
+      font-size: 14px;
+      height: 44px;
+      line-height: 44px;
+      padding-left: 36px;
+      text-align: left;
+      white-space: nowrap;
+      &:hover {
+        color: #52a0db;
+      }
+    }
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  .modify_pwd {
+    background-image: url("~@/assets/img/icon_modify_pwd.png");
+  }
+  .logout {
+    background-image: url("~@/assets/img/icon_logout.png");
+  }
+}
+.user_operation_icon {
+  position: absolute;
+  top: -18px;
+  right: 3px;
+  font-size: 30px;
+}
+
+.detail_page_logo {
+  width: 40px;
+  height: 72px;
+  //background-image: url("~@/assets/img/login_logo.png");
+  background-image: url("~@/assets/img/vidoe_placeholder.png");
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: auto 50px;
+}
+
+.search_icon {
+  font-size: 25px;
+  line-height: 72px;
+  margin-right: 50px;
+  cursor: pointer;
+}
+@media all and (max-width: 1000px) {
+  .navbar {
+    padding: 0 10px;
+  }
+  .nav_page_title {
+    margin-left: 10px;
+    font-size: 12px;
+  }
+  .search_icon {
+    margin-right: 10px;
+  }
+  .user_info {
+    margin-left: 10px;
+    .photo {
+      display: none;
+    }
+    .user_info_name {
+      font-size: 12px;
+    }
+  }
+}

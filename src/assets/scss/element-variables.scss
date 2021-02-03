@@ -1,0 +1,42 @@
+/* 改变主题色变量 */
+$--color-primary: #52a0db;
+
+/* 改变 icon 字体路径变量，必需 */
+$--font-path: "~element-ui/lib/theme-chalk/fonts";
+
+@import "~element-ui/packages/theme-chalk/src/index";
+
+.el-table th,
+.el-table td {
+  padding: 15px 0;
+}
+.el-table tr:last-child td {
+  border-bottom: none;
+}
+.el-table::before {
+  background-color: transparent;
+}
+
+.el-button--text,
+.el-button--text:hover,
+.el-button--text:focus {
+  background: rgba(82, 160, 219, 0.05);
+  border: 1px solid $--color-primary;
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+.text_left {
+  text-align: left;
+}
+.text_right {
+  text-align: right;
+}
+
+.el-table th > .cell {
+  word-break: keep-all;
+  word-wrap: break-word;
+}
+.color_primary {
+  color: $--color-primary;
+}

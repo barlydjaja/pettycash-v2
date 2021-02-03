@@ -1,32 +1,42 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <!-- <div id="nav"> -->
+    <router-link :to="{ name: 'Login' }"></router-link>
+    <router-link :to="{ name: 'Transaction' }"></router-link>
+    <!-- </div> -->
+    <!-- <div class="app-nav"> -->
+    <NavBar v-if="isShowNav" />
+    <!-- </div> -->
+    <router-view />
   </div>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import NavBar from "./components/nav-bar";
 
-#nav {
-  padding: 30px;
-}
+export default {
+  name: "App",
+  components: {
+    NavBar,
+  },
+  computed: {
+    isShowNav() {
+      return !(this.$route.name === "Login");
+    },
+  },
+};
+</script>
+<style lang="scss">
+@import "@/assets/scss/function";
+@import "@/assets/scss/partials/reset";
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 </style>
