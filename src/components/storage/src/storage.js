@@ -14,7 +14,7 @@ const _storage = {}; // 本地变量后备
 function detect(type) {
   try {
     const storage = window[type];
-    const x = '__storage_test__';
+    const x = "__storage_test__";
     storage.setItem(x, x);
     storage.removeItem(x);
     return true;
@@ -29,8 +29,7 @@ function detect(type) {
  * @class storage
  */
 class storage {
-
-  constructor({ type = 'localStorage', prefix = '__storage__' }) {
+  constructor({ type = "localStorage", prefix = "__storage__" }) {
     this.prefix = prefix;
     this.type = type;
 
@@ -39,7 +38,7 @@ class storage {
   }
 
   _fillPrefix(key) {
-    if(key.indexOf(this.prefix) === 0){
+    if (key.indexOf(this.prefix) === 0) {
       return key;
     }
 
@@ -70,7 +69,7 @@ class storage {
     }
 
     if (obj && obj.data) {
-      if (!obj.expire || obj.expire > (new Date()).getTime()) {
+      if (!obj.expire || obj.expire > new Date().getTime()) {
         return obj.data;
       }
       this.remove(key);
@@ -90,13 +89,13 @@ class storage {
    */
   set(key, value, expire) {
     const obj = {
-      data: value
+      data: value,
     };
 
     key = this._fillPrefix(key);
 
     if (expire && expire > 0) {
-      obj.expire = (new Date()).getTime() + expire;
+      obj.expire = new Date().getTime() + expire;
     }
 
     if (this.enabled) {
@@ -125,9 +124,9 @@ class storage {
       keys = Object.keys(_storage);
     }
 
-    keys.forEach((key)=>{
+    keys.forEach((key) => {
       const index = key.indexOf(this.prefix);
-      if(index === 0){
+      if (index === 0) {
         resultKeys.push(key.substring(prefixLength));
       }
     });
@@ -157,10 +156,10 @@ class storage {
    *
    * @memberof storage
    */
-  removeAll(){
+  removeAll() {
     const keys = this.getKeys();
 
-    keys.forEach((key)=>{
+    keys.forEach((key) => {
       this.remove(key);
     });
   }
@@ -178,7 +177,6 @@ class storage {
       this.get(key);
     });
   }
-};
-
+}
 
 export default storage;

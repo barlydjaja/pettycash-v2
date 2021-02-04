@@ -1,20 +1,13 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import loginRouter from './Login';
+import Vue from "vue";
+import VueRouter from "vue-router";
+import loginRouter from "./Login";
+import transactionRouter from "./Transaction";
 
-Vue.use(VueRouter)
-
+Vue.use(VueRouter);
 
 const router = new VueRouter({
-  mode: 'history',
-  routes:[
-    ...loginRouter,
-    {
-      path: '/transaction',
-      name: 'Transaction',
-      component: resolve => require(['@/views/Transaction'], resolve),
-    }
-  ]
-})
+  mode: "history",
+  routes: [...loginRouter, ...transactionRouter],
+});
 
-export default router
+export default router;

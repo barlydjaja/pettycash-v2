@@ -22,7 +22,7 @@
         ref="form"
         :model="form"
         :rules="rules"
-        @submit.native="submit"
+        @submit.native.prevent="submit"
         :label-position="labelPosition"
       >
         <div class="form_title">Login</div>
@@ -61,6 +61,8 @@
 </template>
 
 <script>
+import EventService from "@/services/EventService";
+// import storage from "@/libs/storage";
 export default {
   name: "Login",
   data() {
@@ -93,8 +95,7 @@ export default {
     },
   },
   methods: {
-    submit(e) {
-      e.preventDefault();
+    submit() {
       this.form.username = this.form.username.trim();
       this.form.password = this.form.password.trim();
       this.onSubmit();
@@ -102,7 +103,16 @@ export default {
 
     onSubmit() {
       const body = this.form;
-      console.log(body);
+      EventService.login(body)
+        .then((res) => {
+          console.log(res.data);
+          const { status, data } = res;
+          if (status === 200) {
+            const { role, token, userId } = data;
+            localStorage.setItem("user", { role, token, userId });
+          }
+        })
+        .catch((err) => console.log(err.message));
     },
   },
 };
