@@ -27,7 +27,7 @@
         <li>
           <!-- FIXME: bind class active diubah dinamis -->
           <router-link
-            :to="{ name: 'Login' }"
+            :to="{ name: 'Transaction' }"
             class="menu_icon menu_icon_user"
             :class="{ active: false }"
             >Profil User</router-link
@@ -35,43 +35,43 @@
         </li>
         <li>
           <!-- FIXME: bind class active diubah dinamis -->
-          <a
-            @click.stop.prevent="goTo(menuFirst)"
-            :class="{ active: false }"
+          <router-link
+            :to="{ name: 'Transaction' }"
             class="menu_icon menu_other"
-            href="javascript:void(0)"
-            >Transaksi
-          </a>
+            :class="{ active: false }"
+          >
+            Transaksi
+          </router-link>
         </li>
         <li>
           <!-- FIXME: bind class active diubah dinamis -->
-          <a
-            @click.stop.prevent="goTo(menuFirst)"
-            :class="{ active: false }"
+          <router-link
+            :to="{ name: 'Approval' }"
             class="menu_icon menu_other"
-            href="javascript:void(0)"
-            >Approval
-          </a>
+            :class="{ active: false }"
+          >
+            Approval
+          </router-link>
         </li>
         <li>
           <!-- FIXME: bind class active diubah dinamis -->
-          <a
-            @click.stop.prevent="goTo(menuFirst)"
-            :class="{ active: false }"
+          <router-link
+            :to="{ name: 'Edited' }"
             class="menu_icon menu_other"
-            href="javascript:void(0)"
-            >Edited
-          </a>
+            :class="{ active: false }"
+          >
+            Edited
+          </router-link>
         </li>
         <li>
           <!-- FIXME: bind class active diubah dinamis -->
-          <a
-            @click.stop.prevent="goTo(menuFirst)"
-            :class="{ active: false }"
+          <router-link
+            :to="{ name: 'Deleted' }"
             class="menu_icon menu_other"
-            href="javascript:void(0)"
-            >Deleted
-          </a>
+            :class="{ active: false }"
+          >
+            Deleted
+          </router-link>
         </li>
       </ul>
     </div>

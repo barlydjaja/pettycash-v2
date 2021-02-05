@@ -107,6 +107,7 @@ import EventService from "@/services/EventService";
 import storage from "@/libs/storage";
 import LeftMenu from "@/components/left-menu";
 import axios from "axios";
+import fs from "fs";
 export default {
   name: "Transaction",
   components: { LeftMenu },
@@ -154,6 +155,7 @@ export default {
     getTableData() {
       EventService.getAllTransactionsByMonthAndBranch(this.form).then((res) => {
         const { status, data } = res;
+        console.log(data);
         if (status === 200) this.tableData = data;
       });
     },
@@ -175,15 +177,13 @@ export default {
           },
           responseType: "arraybuffer",
         })
-        .then((response) => {
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", "template.xlsx");
-          document.body.appendChild(link);
-          link.click();
+        .then((result) => {
+          console.log(result);
+          const outputFilename = "xyzzzz.xls";
+          fs.writeFileSync(outputFilename, result.data);
+          return outputFilename;
         })
-        .catch((error) => console.log(error));
+        .catch((err) => console.log(err));
     },
   },
 };

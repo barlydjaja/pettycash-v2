@@ -6,18 +6,21 @@
     <!-- </div> -->
     <!-- <div class="app-nav"> -->
     <NavBar v-if="isShowNav" />
+
     <!-- </div> -->
     <router-view />
   </div>
 </template>
 
 <script>
-import NavBar from "./components/nav-bar";
+import NavBar from "@/components/nav-bar";
+// import LeftMenu from "@/components/left-menu";
 
 export default {
   name: "App",
   components: {
     NavBar,
+    // LeftMenu,
   },
   computed: {
     isShowNav() {
