@@ -62,7 +62,7 @@
 
 <script>
 import EventService from "@/services/EventService";
-// import storage from "@/libs/storage";
+import storage from "@/libs/storage";
 export default {
   name: "Login",
   data() {
@@ -109,7 +109,7 @@ export default {
           const { status, data } = res;
           if (status === 200) {
             const { role, token, userId } = data;
-            localStorage.setItem("user", { role, token, userId });
+            storage.set("user", { role, token, userId });
           }
         })
         .catch((err) => console.log(err.message));

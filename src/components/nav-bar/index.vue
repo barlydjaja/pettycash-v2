@@ -4,7 +4,7 @@
     <div
       :class="{
         'navbar-left': true,
-        'navbar-left-padding': false, // nanti diganti ke store
+        'navbar-left-padding': true, // nanti diganti ke store
       }"
     >
       <!-- menu button -->

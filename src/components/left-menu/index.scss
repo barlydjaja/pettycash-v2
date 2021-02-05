@@ -1,0 +1,151 @@
+.left_menu {
+  padding: 24px 0;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.lock_menu {
+  margin: 0 24px;
+  height: 24px;
+  width: 24px;
+  cursor: pointer;
+}
+.lock_menu_lock {
+  background-image: url("~@/assets/img/icon_lock.png");
+  background-repeat: no-repeat;
+  background-size: 18px 18px;
+  background-position: center center;
+}
+.lock_menu_unLock {
+  background-image: url("~@/assets/img/icon_unlock.png");
+  background-repeat: no-repeat;
+  background-size: 18px 18px;
+  background-position: center center;
+}
+.hide_menu {
+  margin: 0 24px;
+  height: 24px;
+  width: 24px;
+  background-image: url("~@/assets/img/icon_menu_close.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center center;
+  cursor: pointer;
+}
+.system_logo_name {
+  margin: 28px 0;
+}
+.system_logo {
+  height: 60px;
+  width: 80px;
+  margin: 0 auto;
+  background-image: url("~@/assets/img/menu_logo.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: 0 0;
+}
+.system_name {
+  color: #8fcefe;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 11px;
+}
+.menu {
+  a {
+    display: block;
+    padding: 0 16px 0 74px;
+    color: #fff;
+    font-size: 14px;
+    height: 56px;
+    line-height: 56px;
+    opacity: 0.6;
+    &:hover,
+    &.active {
+      opacity: 1;
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+    i {
+      float: right;
+      height: 56px;
+      line-height: 56px;
+    }
+    .menu_icon_arrow.rotate {
+      transform: rotate(180deg);
+    }
+  }
+  .submenu {
+    // 二级菜单
+    a {
+      background-color: rgba(0, 0, 0, 0.1);
+      padding-left: 90px;
+      &.active {
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+    }
+    .menu_icon {
+      background-position: 54px center;
+    }
+    .submenu {
+      // 三级菜单
+      a {
+        padding-left: 110px;
+        background-color: rgba(0, 0, 0, 0.2);
+        &.active {
+          background-color: rgba(0, 0, 0, 0.3);
+        }
+      }
+      .menu_icon {
+        background-position: 74px center;
+      }
+      .submenu {
+        // 四级菜单
+        a {
+          padding-left: 130px;
+          background-color: rgba(0, 0, 0, 0.3);
+          &.active {
+            background-color: rgba(0, 0, 0, 0.4);
+          }
+        }
+        .menu_icon {
+          background-position: 94px center;
+        }
+      }
+    }
+  }
+}
+.menu_icon {
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  background-position: 38px center;
+}
+.menu_icon_user {
+  background-image: url("~@/assets/img/user_info.png");
+}
+
+.menu_other {
+  background-image: url("~@/assets/img/icon_remark.png");
+}
+
+@media all and (max-width: 1000px) {
+  .lock_menu_lock {
+    display: none;
+  }
+  .menu a {
+    padding-left: 40px;
+  }
+  .menu_icon {
+    background-position: 10px center;
+  }
+  .menu {
+    .submenu {
+      a {
+        padding-left: 50px;
+      }
+      .menu_icon {
+        background-position: 20px center;
+      }
+    }
+  }
+}
