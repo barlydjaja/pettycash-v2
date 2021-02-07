@@ -3,12 +3,13 @@ import api from "@/api";
 import storage from "@/libs/storage";
 
 const user = storage.get("user");
+// console.log(user);
 
 const apiClient = axios.create({
   baseURL: `http://10.69.72.99:8081/pettycash/`,
-  timeout: 30000,
+  timeout: 3000,
   headers: {
-    Authorization: `Bearer ${user.token}`,
+    Authorization: user ? `Bearer ${user.token}` : "",
   },
 });
 

@@ -6,6 +6,7 @@ import ElementUI from "element-ui";
 import locale from "element-ui/lib/locale/lang/en";
 import JwPagination from "jw-vue-pagination";
 import "element-ui/lib/theme-chalk/index.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI, { locale });

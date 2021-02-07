@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "bootstrap": "^4.6.0",
     "core-js": "^3.6.5",
     "element-ui": "^2.15.0",
     "jw-vue-pagination": "^1.0.3",
