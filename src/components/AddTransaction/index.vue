@@ -57,18 +57,18 @@
 </template>
 
 <script>
-import storage from "@/libs/storage";
 import EventService from "@/services/EventService";
-
-const user = storage.get("user");
 
 export default {
   name: "AddTransactions",
+  props: {
+    userId: Number,
+  },
   data() {
     return {
       transactionDialog: false,
       form: {
-        userId: user.userId,
+        userId: this.$props.userId,
       },
       transactionsName: [
         { name: "Transportation", value: 2 },
@@ -95,8 +95,8 @@ export default {
         .then((res) => {
           // console.log(res);
           const { data, status } = res;
-          this.transactionDialog = false;
           if (data && status === 200) {
+            this.transactionDialog = false;
             this.$emit("new-transaction");
           }
         })

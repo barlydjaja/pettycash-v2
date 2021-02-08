@@ -48,7 +48,10 @@
             <el-row>
               <!-- <p>{{ form }}</p> -->
               <el-col :span="16">
-                <AddTransactions v-on:new-transaction="newTransaction" />
+                <AddTransactions
+                  v-on:new-transaction="updateTable"
+                  v-bind:userId="this.user.userId"
+                />
               </el-col>
               <el-col :span="8" class="search_box">
                 <el-button @click="exportToExcel">excel download</el-button>
@@ -84,7 +87,7 @@
               sortable
               prop="transactionDate"
               :label="'Tanggal'"
-              min-width="150"
+              min-width="100"
             >
               <template slot-scope="scope">
                 {{ scope.row.transactionDate.split(" ")[0] }}
@@ -129,31 +132,43 @@
                 Rp {{ autoDot(scope.row.residue) }}
               </template>
             </el-table-column>
-            <el-table-column prop="fileName" :label="'receipt'" min-width="150">
+            <el-table-column prop="fileName" :label="'receipt'" min-width="200">
               <template slot-scope="scope">
                 <EditTransaction
+                  v-bind:userId="user.userId"
                   v-bind:transactionId="scope.row.transactionId"
+                  v-on:edit-transaction="updateTable"
                 />
-                <el-button
-                  @click="handleUpload(scope.row.transactionId)"
-                  size="mini"
+                <UploadPhoto
                   v-show="!scope.row.fileName"
-                >
-                  <i class="el-icon-upload"></i>
-                </el-button>
-                <el-button
+                  v-bind:transactionId="scope.row.transactionId"
+                  v-on:upload-photo="updateTable"
+                />
+                <DownloadPhoto
+                  style="margin-left: 10px"
+                  v-if="scope.row.fileName"
+                  v-bind:transactionId="scope.row.transactionId"
+                  v-bind:token="user.token"
+                />
+                <!-- <el-button
                   @click="handleDownload(scope.row.transactionId)"
                   size="mini"
                   v-show="scope.row.fileName"
                 >
                   <i class="el-icon-download"></i>
-                </el-button>
-                <el-button
+                </el-button> -->
+                <DeleteTransaction
+                  style="margin-left: 10px"
+                  v-bind:userId="user.userId"
+                  v-bind:transactionId="scope.row.transactionId"
+                  v-on:delete-transaction="updateTable"
+                />
+                <!-- <el-button
                   size="mini"
                   @click="handleDelete(scope.row.transactionId)"
                 >
                   <i class="el-icon-delete"></i>
-                </el-button>
+                </el-button> -->
               </template>
             </el-table-column>
           </el-table>
@@ -175,12 +190,23 @@ import EventService from "@/services/EventService";
 import storage from "@/libs/storage";
 import LeftMenu from "@/components/left-menu";
 import axios from "axios";
-import fs from "fs";
+import FileSaver from "file-saver";
 import AddTransactions from "@/components/AddTransaction";
 import EditTransaction from "@/components/EditTransaction";
+import DeleteTransaction from "@/components/DeleteTransaction";
+import UploadPhoto from "@/components/UploadPhoto";
+import DownloadPhoto from "@/components/DownloadPhoto";
+
 export default {
   name: "Transaction",
-  components: { LeftMenu, AddTransactions, EditTransaction },
+  components: {
+    LeftMenu,
+    AddTransactions,
+    EditTransaction,
+    DeleteTransaction,
+    UploadPhoto,
+    DownloadPhoto,
+  },
   data() {
     return {
       form: {
@@ -273,45 +299,18 @@ export default {
     this.getTableData();
   },
   methods: {
-    newTransaction() {
+    updateTable() {
       this.getTableData();
     },
+
     autoDot(number) {
       return number.toLocaleString("id-ID");
     },
-    handleDelete(id) {
-      // console.log(`id of ${id} will be deleted`);
-      this.$confirm(
-        `This will permanently delete the file. Continue? ${id}`,
-        "Warning",
-        {
-          confirmButtonText: "OK",
-          cancelButtonText: "Cancel",
-          type: "warning",
-        }
-      )
-        .then(() => {
-          this.$message({
-            type: "success",
-            message: "Delete completed",
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "Delete canceled",
-          });
-        });
-    },
-    handleEdit(id) {
-      console.log(`id of ${id} will be edited`);
-    },
+
     handleDownload(id) {
       console.log(`id of ${id} will be downloaded`);
     },
-    handleUpload(id) {
-      console.log(`id of ${id} will be uploaded`);
-    },
+
     onChangePage(pageOfItems) {
       this.pageOfItems = pageOfItems;
       // console.log(pageOfItems);
@@ -338,24 +337,19 @@ export default {
 
     exportToExcel() {
       //FIXME: first method
-      const user = storage.get("user");
+
       const url =
         "http://10.69.72.99:8081/pettycash/v1/export/transaction?userId=1";
       axios
         .post(url, this.tableData, {
           headers: {
-            Authorization: `Bearer ${user.token}`,
-            "Content-Disposition": "attachment; filename=template.xlsx",
-            "Content-Type":
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            Authorization: `Bearer ${this.user.token}`,
           },
-          responseType: "arraybuffer",
+          responseType: "blob",
         })
         .then((result) => {
-          console.log(result);
-          const outputFilename = "xyzzzz.xls";
-          fs.writeFileSync(outputFilename, result.data);
-          return outputFilename;
+          // console.log(result);
+          FileSaver.saveAs(result.data);
         })
         .catch((err) => console.log(err));
     },

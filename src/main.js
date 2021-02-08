@@ -5,11 +5,13 @@ import store from "./store";
 import ElementUI from "element-ui";
 import locale from "element-ui/lib/locale/lang/en";
 import JwPagination from "jw-vue-pagination";
+import VueAuthHref from "vue-auth-href";
 import "element-ui/lib/theme-chalk/index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI, { locale });
+Vue.use(VueAuthHref);
 
 Vue.component("jw-pagination", JwPagination);
 

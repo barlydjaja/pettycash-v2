@@ -9,5 +9,14 @@ export default {
   },
   exportToExcel: `${version}/export/transaction`,
   addNewTransaction: `${version}/transaction/add`,
-  updateTransaction: `${version}/transaction/update`,
+  updateTransaction(transactionId) {
+    return `${version}/transaction/update?transactionId=${transactionId}`;
+  },
+  deleteTransaction(transactionId, userId) {
+    return `${version}/transaction/delete?transactionId=${transactionId}&userId=${userId}`;
+  },
+  uploadPhoto: `${version}/file/upload`,
+  downloadPhoto(transactionId) {
+    return `${version}/file/download/${transactionId}`;
+  },
 };
