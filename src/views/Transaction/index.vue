@@ -46,9 +46,9 @@
               </el-col>
             </el-row>
             <el-row>
-              <p>{{ form }}</p>
+              <!-- <p>{{ form }}</p> -->
               <el-col :span="16">
-                <el-button>Tambah Transaksi</el-button>
+                <AddTransactions v-on:new-transaction="newTransaction" />
               </el-col>
               <el-col :span="8" class="search_box">
                 <el-button @click="exportToExcel">excel download</el-button>
@@ -85,7 +85,12 @@
               prop="transactionDate"
               :label="'Tanggal'"
               min-width="150"
-            ></el-table-column>
+            >
+              <template slot-scope="scope">
+                {{ scope.row.transactionDate.split(" ")[0] }}
+                <!-- Rp {{ autoDot(scope.row.amount) }} -->
+              </template>
+            </el-table-column>
             <el-table-column
               sortable
               prop="user.username"
@@ -126,24 +131,27 @@
             </el-table-column>
             <el-table-column prop="fileName" :label="'receipt'" min-width="150">
               <template slot-scope="scope">
-                <el-button size="mini" @click="handleEdit(scope.row.id)">
-                  <i class="el-icon-edit"></i
-                ></el-button>
+                <EditTransaction
+                  v-bind:transactionId="scope.row.transactionId"
+                />
                 <el-button
-                  @click="handleDownload(scope.row.id)"
+                  @click="handleUpload(scope.row.transactionId)"
+                  size="mini"
+                  v-show="!scope.row.fileName"
+                >
+                  <i class="el-icon-upload"></i>
+                </el-button>
+                <el-button
+                  @click="handleDownload(scope.row.transactionId)"
                   size="mini"
                   v-show="scope.row.fileName"
                 >
                   <i class="el-icon-download"></i>
                 </el-button>
                 <el-button
-                  @click="handleUpload(scope.row.id)"
                   size="mini"
-                  v-show="!scope.row.fileName"
+                  @click="handleDelete(scope.row.transactionId)"
                 >
-                  <i class="el-icon-upload"></i>
-                </el-button>
-                <el-button size="mini" @click="handleDelete(scope.row.id)">
                   <i class="el-icon-delete"></i>
                 </el-button>
               </template>
@@ -168,9 +176,11 @@ import storage from "@/libs/storage";
 import LeftMenu from "@/components/left-menu";
 import axios from "axios";
 import fs from "fs";
+import AddTransactions from "@/components/AddTransaction";
+import EditTransaction from "@/components/EditTransaction";
 export default {
   name: "Transaction",
-  components: { LeftMenu },
+  components: { LeftMenu, AddTransactions, EditTransaction },
   data() {
     return {
       form: {
@@ -180,79 +190,79 @@ export default {
       },
       currentMonth: new Date().toLocaleString("default", { month: "long" }),
       months: [
-        { name: "January", value: 0 },
-        { name: "February", value: 1 },
-        { name: "March", value: 2 },
-        { name: "April", value: 3 },
-        { name: "May", value: 4 },
-        { name: "June", value: 5 },
-        { name: "Juli", value: 6 },
-        { name: "August", value: 7 },
-        { name: "September", value: 8 },
-        { name: "October", value: 9 },
-        { name: "November", value: 10 },
-        { name: "December", value: 11 },
+        { name: "January", value: 1 },
+        { name: "February", value: 2 },
+        { name: "March", value: 3 },
+        { name: "April", value: 4 },
+        { name: "May", value: 5 },
+        { name: "June", value: 6 },
+        { name: "Juli", value: 7 },
+        { name: "August", value: 8 },
+        { name: "September", value: 9 },
+        { name: "October", value: 10 },
+        { name: "November", value: 11 },
+        { name: "December", value: 12 },
       ],
       search: "",
       pageOfItems: [],
       rules: {},
       tableData: [
-        {
-          transactionDate: 12,
-          user: {
-            username: "ahmad",
-          },
-          transactionType: {
-            transactionTypeName: "barang bekas",
-          },
-          description: "income",
-          amount: 123,
-          residue: 1233333,
-          fileName: null,
-          id: 12,
-        },
-        {
-          transactionDate: 13,
-          user: {
-            username: "dani",
-          },
-          transactionType: {
-            transactionTypeName: "barang baru",
-          },
-          description: "outcome",
-          amount: 12345,
-          residue: 0,
-          fileName: "ada disini",
-          id: 13,
-        },
-        {
-          transactionDate: 14,
-          user: {
-            username: "luna",
-          },
-          transactionType: {
-            transactionTypeName: "pribady",
-          },
-          description: "income",
-          amount: 123,
-          residue: 123,
-          fileName: null,
-          id: 14,
-        },
-        {
-          transactionDate: 15,
-          user: {
-            username: "beni",
-          },
-          transactionType: {
-            transactionTypeName: "personal",
-          },
-          description: "income",
-          amount: 321,
-          residue: 444,
-          fileName: "ada disini bro",
-          id: 15,
-        },
+        // {
+        //   transactionDate: 12,
+        //   user: {
+        //     username: "ahmad",
+        //   },
+        //   transactionType: {
+        //     transactionTypeName: "barang bekas",
+        //   },
+        //   description: "income",
+        //   amount: 123,
+        //   residue: 1233333,
+        //   fileName: null,
+        //   id: 12,
+        // },
+        // {
+        //   transactionDate: 13,
+        //   user: {
+        //     username: "dani",
+        //   },
+        //   transactionType: {
+        //     transactionTypeName: "barang baru",
+        //   },
+        //   description: "outcome",
+        //   amount: 12345,
+        //   residue: 0,
+        //   fileName: "ada disini",
+        //   id: 13,
+        // },
+        // {
+        //   transactionDate: 14,
+        //   user: {
+        //     username: "luna",
+        //   },
+        //   transactionType: {
+        //     transactionTypeName: "pribady",
+        //   },
+        //   description: "income",
+        //   amount: 123,
+        //   residue: 123,
+        //   fileName: null,
+        //   id: 14,
+        // },
+        // {
+        //   transactionDate: 15,
+        //   user: {
+        //     username: "beni",
+        //   },
+        //   transactionType: {
+        //     transactionTypeName: "personal",
+        //   },
+        //   description: "income",
+        //   amount: 321,
+        //   residue: 444,
+        //   fileName: "ada disini bro",
+        //   id: 15,
+        // },
       ],
       user: storage.get("user"),
     };
@@ -263,6 +273,9 @@ export default {
     this.getTableData();
   },
   methods: {
+    newTransaction() {
+      this.getTableData();
+    },
     autoDot(number) {
       return number.toLocaleString("id-ID");
     },
@@ -308,7 +321,7 @@ export default {
       const month = date.toLocaleString("default", {
         month: "long",
       });
-      const monthNumber = date.getMonth();
+      const monthNumber = date.getMonth() + 1;
       this.form.month = monthNumber;
       return month;
     },
@@ -316,7 +329,7 @@ export default {
       EventService.getAllTransactionsByMonthAndBranch(this.form).then((res) => {
         const { status, data } = res;
         console.log(data);
-        if (status === 200) this.tableData = data;
+        if (status === 200) this.tableData = data.reverse();
       });
     },
 

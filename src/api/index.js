@@ -8,4 +8,6 @@ export default {
     return `${version}/${view}/getTransactionsByBranch?branch=${branch.toUpperCase()}`;
   },
   exportToExcel: `${version}/export/transaction`,
+  addNewTransaction: `${version}/transaction/add`,
+  updateTransaction: `${version}/transaction/update`,
 };

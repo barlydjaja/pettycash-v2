@@ -7,7 +7,7 @@ const user = storage.get("user");
 
 const apiClient = axios.create({
   baseURL: `http://10.69.72.99:8081/pettycash/`,
-  timeout: 3000,
+  timeout: 30000,
   headers: {
     Authorization: user ? `Bearer ${user.token}` : "",
   },
@@ -16,12 +16,13 @@ const apiClient = axios.create({
 export default {
   // all post
   login(body) {
-    // console.log(body);
-    // console.log(api.login);
     return apiClient.post(api.login, body);
   },
   getAllTransactionsByMonthAndBranch(body) {
     return apiClient.post(api.viewAllTransactionsByMonthAndBranch, body);
+  },
+  addNewTransaction(body) {
+    return apiClient.post(api.addNewTransaction, body);
   },
 
   // all get
