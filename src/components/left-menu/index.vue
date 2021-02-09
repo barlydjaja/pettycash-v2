@@ -12,7 +12,11 @@
           lock_menu_unLock: isLock,
         }"
       ></div>
-      <div v-show="!isLock" class="hide_menu"></div>
+      <div
+        v-show="!isLock"
+        class="hide_menu"
+        @click="$store.state.menu.show = false"
+      ></div>
     </div>
 
     <!-- input logo  -->
@@ -27,7 +31,7 @@
         <li>
           <!-- FIXME: bind class active diubah dinamis -->
           <router-link
-            :to="{ name: 'Transaction' }"
+            :to="{ name: 'TransactionHistory' }"
             class="menu_icon menu_icon_user"
             :class="{ active: false }"
             >Profil User</router-link
@@ -36,7 +40,7 @@
         <li>
           <!-- FIXME: bind class active diubah dinamis -->
           <router-link
-            :to="{ name: 'Transaction' }"
+            :to="{ name: 'TransactionHistory' }"
             class="menu_icon menu_other"
             :class="{ active: false }"
           >
@@ -79,6 +83,7 @@
 </template>
 
 <script>
+import storage from "@/libs/storage";
 export default {
   name: "left-menu",
   data() {
@@ -89,6 +94,8 @@ export default {
   methods: {
     lockMenu() {
       this.isLock = !this.isLock;
+      this.$store.state.menu.isLock = this.isLock;
+      storage.set("lockMenu", this.islock);
     },
   },
 };

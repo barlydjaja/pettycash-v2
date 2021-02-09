@@ -4,7 +4,7 @@
     <div
       :class="{
         'navbar-left': true,
-        'navbar-left-padding': false, // nanti diganti ke store
+        'navbar-left-padding': $store.state.menu.isLock, // nanti diganti ke store
       }"
     >
       <!-- menu button -->
@@ -26,6 +26,11 @@
 <script>
 export default {
   name: "nav-bar",
+  methods: {
+    toggleMenuShow(show) {
+      this.$store.commit("toggleMenuShow", show);
+    },
+  },
 };
 </script>
 

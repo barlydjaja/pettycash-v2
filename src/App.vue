@@ -1,12 +1,6 @@
 <template>
   <div id="app">
-    <!-- <div id="nav"> -->
-    <router-link :to="{ name: 'Login' }"></router-link>
-    <router-link :to="{ name: 'Transaction' }"></router-link>
-    <!-- </div> -->
-    <!-- <div class="app-nav"> -->
     <NavBar v-if="isShowNav" />
-
     <!-- </div> -->
     <router-view />
   </div>

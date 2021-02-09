@@ -108,8 +108,8 @@ export default {
           console.log(res.data);
           const { status, data } = res;
           if (status === 200) {
-            const { role, token, userId } = data;
-            storage.set("user", { role, token, userId });
+            const { role, token, userId, branch } = data;
+            storage.set("user", { role, token, userId, branch });
           }
         })
         .catch((err) => console.log(err.message));
