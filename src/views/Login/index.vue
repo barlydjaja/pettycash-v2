@@ -79,14 +79,12 @@ export default {
       return {
         username: [
           {
-            required: true,
             message: "Masukan Username",
             trigger: "blur",
           },
         ],
         password: [
           {
-            required: true,
             message: "Masukan Password",
             trigger: "blur",
           },
@@ -106,11 +104,8 @@ export default {
       EventService.login(body)
         .then((res) => {
           console.log(res.data);
-          const { status, data } = res;
-          if (status === 200) {
-            const { role, token, userId, branch } = data;
-            storage.set("user", { role, token, userId, branch });
-          }
+          const { role, token, userId, branch } = res.data;
+          storage.set("user", { role, token, userId, branch });
         })
         .catch((err) => console.log(err.message));
     },

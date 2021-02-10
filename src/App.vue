@@ -1,8 +1,11 @@
 <template>
   <div id="app">
-    <NavBar v-if="isShowNav" />
+    <div class="app-nav">
+      <NavBar v-if="isShowNav" />
+    </div>
     <!-- </div> -->
-    <router-view />
+    <router-link :to="{ name: 'TransactionHistory' }">sejarah sini</router-link>
+    <router-view v-if="isRouterAlive" />
   </div>
 </template>
 
@@ -12,6 +15,11 @@ import NavBar from "@/components/nav-bar";
 
 export default {
   name: "App",
+  data() {
+    return {
+      isRouterAlive: true,
+    };
+  },
   components: {
     NavBar,
     // LeftMenu,

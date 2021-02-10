@@ -28,6 +28,9 @@ export default {
   updateTransaction(body, transactionId) {
     return apiClient.post(api.updateTransaction(transactionId), body);
   },
+  updateNotApprovedTransaction(body) {
+    return apiClient.post(api.updateNotApprovedTransaction, body);
+  },
   uploadPhoto(body) {
     const config = {
       headers: {
@@ -37,8 +40,20 @@ export default {
     };
     return apiClient.post(api.uploadPhoto, body, config);
   },
+  uploadPendingPhoto(body) {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+        "content-type": "multipart/form-data",
+      },
+    };
+    return apiClient.post(api.uploadPendingPhoto, body, config);
+  },
 
   // all get
+  getNotApprovedTransactions(userId) {
+    return apiClient.get(api.viewNotApprovedTransactions(userId));
+  },
   getTransactionsByBranch(branch) {
     return apiClient.get(api.viewApprovedTransactions(branch));
   },
@@ -47,5 +62,11 @@ export default {
   },
   downloadPhoto(transactionId) {
     return apiClient.get(api.downloadPhoto(transactionId));
+  },
+  approve(transactionId, userId) {
+    return apiClient.get(api.approve(transactionId, userId));
+  },
+  rejectApprove(transactionId) {
+    return apiClient.get(api.rejectApprove(transactionId));
   },
 };

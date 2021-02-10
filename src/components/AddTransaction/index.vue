@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import EventService from "@/services/EventService";
+// import EventService from "@/services/EventService";
 
 export default {
   name: "AddTransactions",
@@ -91,16 +91,17 @@ export default {
   },
   methods: {
     handleSubmit() {
-      EventService.addNewTransaction(this.form)
-        .then((res) => {
-          // console.log(res);
-          const { data, status } = res;
-          if (data && status === 200) {
-            this.transactionDialog = false;
-            this.$emit("new-transaction");
-          }
-        })
-        .catch((err) => console.log(err));
+      this.$emit("new-transaction", this.form);
+      this.transactionDialog = false;
+      // EventService.addNewTransaction(this.form)
+      //   .then((res) => {
+      //     // console.log(res);
+      //     const { data, status } = res;
+      //     if (data && status === 200) {
+      //       this.transactionDialog = false;
+      //     }
+      //   })
+      //   .catch((err) => console.log(err));
     },
   },
 };

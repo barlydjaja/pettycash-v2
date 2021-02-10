@@ -16,7 +16,6 @@ export default {
   },
   methods: {
     handleDelete() {
-      // console.log(`id of ${id} will be deleted`);
       this.$confirm(
         `This will permanently delete the file. Continue? `,
         "Warning",

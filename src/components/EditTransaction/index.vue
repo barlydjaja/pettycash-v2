@@ -48,25 +48,27 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editDialog = false">Cancel</el-button>
-        <el-button @click="handleSubmit">Submit</el-button>
+        <el-button @click="handleSubmit">submit</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import EventService from "@/services/EventService";
+// import EventService from "@/services/EventService";
 export default {
   name: "EditTransaction",
   props: {
     transactionId: Number,
     userId: Number,
+    notTransactionId: Number,
   },
   data() {
     return {
       editDialog: false,
       form: {
         userId: this.$props.userId,
+        notTransactionId: this.$props.notTransactionId,
       },
       transactionsName: [
         { name: "Transportation", value: 2 },
@@ -89,15 +91,10 @@ export default {
   },
   methods: {
     handleSubmit() {
-      EventService.updateTransaction(this.form, this.$props.transactionId)
-        .then((res) => {
-          const { data, status } = res;
-          if (data.message && status === 200) {
-            this.editDialog = false;
-            this.$emit("edit-transaction");
-          }
-        })
-        .catch((err) => console.log(err));
+      this.$emit("edit-transaction", {
+        form: this.form,
+        transactionId: this.$props.transactionId,
+      });
       this.editDialog = false;
     },
   },

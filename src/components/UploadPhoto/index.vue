@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import EventService from "@/services/EventService";
+// import EventService from "@/services/EventService";
 export default {
   name: "UploadPhoto",
   props: { transactionId: Number },
@@ -32,19 +32,13 @@ export default {
   },
   methods: {
     handleUpload() {
+      console.log(this.$props.transactionId);
       this.file = this.$refs.file.files[0];
       let formData = new FormData();
       formData.append("file", this.file);
       formData.append("transactionId", this.$props.transactionId);
-      EventService.uploadPhoto(formData)
-        .then((res) => {
-          const { data, status } = res;
-          if (data && status === 200) {
-            this.$emit("upload-photo");
-            this.uploadDialog = false;
-          }
-        })
-        .catch((err) => console.log(err));
+      this.$emit("upload-photo", formData);
+      this.uploadDialog = false;
     },
   },
 };

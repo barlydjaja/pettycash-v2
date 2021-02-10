@@ -15,7 +15,7 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item prop="branch" style="display: inline-block">
+            <el-form-item style="display: inline-block">
               <el-select
                 v-model="form.branchName"
                 placeholder="pilih cabang"
@@ -40,7 +40,7 @@
           <!-- <p>{{ form }}</p> -->
           <el-col :span="16">
             <AddTransactions
-              v-on:new-transaction="updateTable"
+              v-on:new-transaction="onNewTransaction"
               v-bind:userId="this.user.userId"
             />
           </el-col>
@@ -127,12 +127,12 @@
             <EditTransaction
               v-bind:userId="user.userId"
               v-bind:transactionId="scope.row.transactionId"
-              v-on:edit-transaction="updateTable"
+              v-on:edit-transaction="onEditTransaction"
             />
             <UploadPhoto
               v-show="!scope.row.fileName"
               v-bind:transactionId="scope.row.transactionId"
-              v-on:upload-photo="updateTable"
+              v-on:upload-photo="onUploadPhoto"
             />
             <DownloadPhoto
               style="margin-left: 10px"
@@ -183,7 +183,7 @@ import EditTransaction from "@/components/EditTransaction";
 import DeleteTransaction from "@/components/DeleteTransaction";
 import UploadPhoto from "@/components/UploadPhoto";
 import DownloadPhoto from "@/components/DownloadPhoto";
-const user = storage.get("user");
+// const user = storage.get("user");
 
 export default {
   name: "TransactionHistory",
@@ -197,8 +197,8 @@ export default {
   data() {
     return {
       form: {
-        branchName: user.branch,
-        month: null,
+        branchName: storage.get("user").branch,
+        month: Number,
         year: 2021,
       },
 
@@ -277,16 +277,55 @@ export default {
         //   id: 15,
         // },
       ],
-      user,
+      user: storage.get("user"),
     };
   },
 
   created() {
     this.tableMaxHeight = window.document.body.clientHeight - 270;
+    this.user = storage.get("user");
     this.getCurrentMonth();
     this.getTableData();
   },
+  mounted() {
+    this.$nextTick(() => {
+      this.getTableData();
+    });
+  },
+
   methods: {
+    onUploadPhoto(formData) {
+      // console.log(formData);
+      EventService.uploadPhoto(formData)
+        .then((res) => {
+          const { data, status } = res;
+          if (data && status === 200) {
+            this.getTableData();
+          }
+        })
+        .catch((err) => console.log(err));
+    },
+    onNewTransaction(data) {
+      EventService.addNewTransaction(data)
+        .then((res) => {
+          // console.log(res);
+          const { data, status } = res;
+          if (data && status === 200) {
+            this.getTableData();
+          }
+        })
+        .catch((err) => console.log(err));
+    },
+    onEditTransaction({ form, transactionId }) {
+      EventService.updateTransaction(form, transactionId)
+        .then((res) => {
+          const { data, status } = res;
+          if (data.message && status === 200) {
+            this.getTableData();
+          }
+        })
+        .catch((err) => console.log(err));
+    },
     onSearch(search) {
       this.search = search;
     },
