@@ -15,6 +15,7 @@ export default [
     ],
     meta: {
       title: "Transaksi",
+      requiresAuth: true,
     },
   },
 ];

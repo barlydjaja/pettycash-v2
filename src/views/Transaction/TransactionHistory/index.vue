@@ -45,7 +45,7 @@
             />
           </el-col>
           <el-col :span="8" class="search_box">
-            <el-button @click="exportToExcel">excel download</el-button>
+            <el-button @click="exportToExcel">Excel Download</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -109,7 +109,13 @@
           min-width="150"
         >
           <template slot-scope="scope">
-            Rp {{ autoDot(scope.row.amount) }}
+            <span
+              v-bind:class="
+                scope.row.receipt === 'income' ? 'income' : 'outcome'
+              "
+            >
+              Rp {{ autoDot(scope.row.amount) }}
+            </span>
           </template></el-table-column
         >
         <el-table-column
@@ -125,6 +131,7 @@
         <el-table-column prop="fileName" :label="'receipt'" min-width="200">
           <template slot-scope="scope">
             <EditTransaction
+              v-bind:pendingUpdate="scope.row.pendingUpdate"
               v-bind:userId="user.userId"
               v-bind:transactionId="scope.row.transactionId"
               v-on:edit-transaction="onEditTransaction"
@@ -197,7 +204,7 @@ export default {
   data() {
     return {
       form: {
-        branchName: storage.get("user").branch,
+        branchName: storage.get("user").branch.branchName,
         month: Number,
         year: 2021,
       },
@@ -287,11 +294,6 @@ export default {
     this.getCurrentMonth();
     this.getTableData();
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.getTableData();
-    });
-  },
 
   methods: {
     onUploadPhoto(formData) {
@@ -305,13 +307,25 @@ export default {
         })
         .catch((err) => console.log(err));
     },
-    onNewTransaction(data) {
-      EventService.addNewTransaction(data)
+    onNewTransaction({ form, fileForm }) {
+      console.log(form);
+      EventService.addNewTransaction(form)
         .then((res) => {
           // console.log(res);
           const { data, status } = res;
+          console.log("add new transaction ok, proceed to upload photo");
           if (data && status === 200) {
-            this.getTableData();
+            console.log(data);
+            fileForm.append(
+              "transactionId",
+              data.transactionId || data.notTransactionId
+            );
+            EventService.uploadPhoto(fileForm)
+              .then((res) => {
+                const { data, status } = res;
+                if (data && status === 200) this.getTableData();
+              })
+              .catch((err) => console.log(err.message));
           }
         })
         .catch((err) => console.log(err));
@@ -357,13 +371,6 @@ export default {
     },
     getTableData() {
       EventService.getAllTransactionsByMonthAndBranch(this.form).then((res) => {
-        const { status, data } = res;
-        console.log(res);
-        if (status === 200) this.tableData = data.reverse();
-      });
-    },
-    updateTableData(data) {
-      EventService.getAllTransactionsByMonthAndBranch(data).then((res) => {
         const { status, data } = res;
         console.log(res);
         if (status === 200) this.tableData = data.reverse();

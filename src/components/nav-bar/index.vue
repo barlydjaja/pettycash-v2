@@ -31,9 +31,7 @@
         </div>
       </div>
       <div class="user_info">
-        <a href="#"
-          >{{ user.role.roleName }} <i class="el-icon-caret-bottom"></i
-        ></a>
+        <a>{{ user.username }} <i class="el-icon-caret-bottom"></i></a>
         <div class="user_operation_card">
           <i class="user_operation_icon el-icon-caret-top"></i>
           <ul class="user_operation_list">
@@ -64,7 +62,7 @@ export default {
     handleLogout() {
       console.log("logout");
       storage.removeAll();
-      // this.$router.push("/");
+      this.$router.push({ name: "Login" }).catch();
     },
     toggleMenuShow(show) {
       this.$store.commit("toggleMenuShow", show);

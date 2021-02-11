@@ -100,14 +100,24 @@ export default {
     },
 
     onSubmit() {
-      const body = this.form;
-      EventService.login(body)
-        .then((res) => {
-          console.log(res.data);
-          const { role, token, userId, branch } = res.data;
-          storage.set("user", { role, token, userId, branch });
-        })
-        .catch((err) => console.log(err.message));
+      return new Promise((resolve, reject) => {
+        const body = this.form;
+        EventService.login(body)
+          .then((res) => {
+            console.log(res.data);
+            const { status, data } = res;
+            if (status === 200) {
+              const { token, user } = data;
+              storage.set("user", user);
+              storage.set("token", token);
+              resolve();
+              this.$router.push({ name: "TransactionHistory" });
+            } else {
+              reject();
+            }
+          })
+          .catch((err) => console.log(err));
+      });
     },
   },
 };

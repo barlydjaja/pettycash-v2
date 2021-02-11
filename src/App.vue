@@ -4,7 +4,7 @@
       <NavBar v-if="isShowNav" />
     </div>
     <!-- </div> -->
-    <router-link :to="{ name: 'TransactionHistory' }">sejarah sini</router-link>
+    <!-- <router-link :to="{ name: 'TransactionHistory' }">sejarah sini</router-link> -->
     <router-view v-if="isRouterAlive" />
   </div>
 </template>
@@ -88,5 +88,13 @@ body {
   background-color: #fff;
   flex: 1;
   overflow: auto;
+}
+
+.income {
+  color: green;
+}
+
+.outcome {
+  color: crimson;
 }
 </style>

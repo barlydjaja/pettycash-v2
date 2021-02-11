@@ -45,12 +45,13 @@
           ></el-input
         ></el-form-item>
       </el-form>
+      <input type="file" ref="file" accept="image/*" />
       <el-card class="box-card">
         <pre>{{ form }}</pre>
       </el-card>
       <span slot="footer" class="dialog-footer">
         <el-button @click="transactionDialog = false">cancel</el-button>
-        <el-button @click="handleSubmit()">Submit</el-button>
+        <el-button @click="handleSubmit">Submit</el-button>
       </span>
     </el-dialog>
   </div>
@@ -70,6 +71,7 @@ export default {
       form: {
         userId: this.$props.userId,
       },
+      fileForm: new FormData(),
       transactionsName: [
         { name: "Transportation", value: 2 },
         { name: "Medical", value: 3 },
@@ -91,17 +93,12 @@ export default {
   },
   methods: {
     handleSubmit() {
-      this.$emit("new-transaction", this.form);
+      this.fileForm.append("file", this.$refs.file.files[0]);
+      this.$emit("new-transaction", {
+        form: this.form,
+        fileForm: this.fileForm,
+      });
       this.transactionDialog = false;
-      // EventService.addNewTransaction(this.form)
-      //   .then((res) => {
-      //     // console.log(res);
-      //     const { data, status } = res;
-      //     if (data && status === 200) {
-      //       this.transactionDialog = false;
-      //     }
-      //   })
-      //   .catch((err) => console.log(err));
     },
   },
 };

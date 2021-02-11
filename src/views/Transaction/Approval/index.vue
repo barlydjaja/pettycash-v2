@@ -45,7 +45,7 @@
             />
           </el-col>
           <el-col :span="8" class="search_box">
-            <el-button @click="exportToExcel">excel download</el-button>
+            <el-button @click="exportToExcel">Excel Download</el-button>
           </el-col>
         </el-row>
       </el-form>
@@ -81,7 +81,6 @@
         >
           <template slot-scope="scope">
             {{ scope.row.transactionDate.toString().split(" ")[0] }}
-            <!-- Rp {{ autoDot(scope.row.amount) }} -->
           </template>
         </el-table-column>
         <el-table-column
@@ -109,25 +108,31 @@
           min-width="150"
         >
           <template slot-scope="scope">
-            Rp {{ autoDot(scope.row.amount) }}
+            <span
+              v-bind:class="
+                scope.row.receipt === 'income' ? 'income' : 'outcome'
+              "
+            >
+              Rp {{ autoDot(scope.row.amount) }}
+            </span>
           </template></el-table-column
         >
 
         <el-table-column prop="fileName" :label="'receipt'" min-width="200">
           <template slot-scope="scope">
             <EditTransaction
-              v-bind:notTransactionId="scope.row.notTransactionId"
+              v-bind:transactionId="scope.row.notTransactionId"
               v-on:edit-transaction="onEditTransaction"
             />
             <UploadPhoto
               v-show="!scope.row.fileName"
-              v-bind:transactionId="scope.row.transactionId"
+              v-bind:transactionId="scope.row.notTransactionId"
               v-on:upload-photo="onUploadPhoto"
             />
             <DownloadPhoto
               style="margin-left: 10px"
               v-if="scope.row.fileName"
-              v-bind:transactionId="scope.row.transactionId"
+              v-bind:transactionId="scope.row.notTransactionId"
               v-bind:token="user.token"
             />
 
@@ -140,6 +145,7 @@
             </el-button>
 
             <el-popconfirm
+              v-if="user.role.roleName === 'admin'"
               icon="el-icon-info"
               icon-color="green"
               title="Approve Transaction?"
@@ -186,7 +192,7 @@ export default {
   data() {
     return {
       form: {
-        branchName: user.branch,
+        branchName: user.branch.branchName,
         month: null,
         year: 2021,
       },
@@ -303,13 +309,25 @@ export default {
           });
         });
     },
-    onNewTransaction(data) {
-      EventService.addNewTransaction(data)
+    onNewTransaction({ form, fileForm }) {
+      console.log(form);
+      EventService.addNewTransaction(form)
         .then((res) => {
           // console.log(res);
           const { data, status } = res;
+          console.log("add new transaction ok, proceed to upload photo");
           if (data && status === 200) {
-            this.getTableData();
+            console.log(data);
+            fileForm.append(
+              "transactionId",
+              data.transactionId || data.notTransactionId
+            );
+            EventService.uploadPhoto(fileForm)
+              .then((res) => {
+                const { data, status } = res;
+                if (data && status === 200) this.getTableData();
+              })
+              .catch((err) => console.log(err.message));
           }
         })
         .catch((err) => console.log(err));
@@ -321,13 +339,17 @@ export default {
         .then((res) => {
           const { data, status } = res;
           if (data && status === 200) {
+            this.$message({
+              type: "success",
+              message: "Transaction Approved",
+            });
             this.getTableData();
           }
         })
         .catch((err) => console.log(err));
     },
     onUploadPhoto(formData) {
-      EventService.uploadPendingPhoto(formData)
+      EventService.uploadPhoto(formData)
         .then((res) => {
           const { data, status } = res;
           if (data && status === 200) {

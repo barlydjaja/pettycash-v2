@@ -1,6 +1,10 @@
 <template>
   <div style="display: inline-block">
-    <el-button size="mini" @click="editDialog = true">
+    <el-button
+      size="mini"
+      @click="editDialog = true"
+      :disabled="pendingUpdate === 'y'"
+    >
       <i class="el-icon-edit" />
     </el-button>
 
@@ -62,6 +66,8 @@ export default {
     transactionId: Number,
     userId: Number,
     notTransactionId: Number,
+    pendingTransactionId: Number,
+    pendingUpdate: String,
   },
   data() {
     return {
@@ -69,6 +75,7 @@ export default {
       form: {
         userId: this.$props.userId,
         notTransactionId: this.$props.notTransactionId,
+        pendingTransactionId: this.$props.pendingTransactionId,
       },
       transactionsName: [
         { name: "Transportation", value: 2 },
