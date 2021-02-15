@@ -1,8 +1,9 @@
 import api from "@/api";
 import storage from "@/libs/storage";
 import apiClient from "@/api/ApiClient";
-const user = storage.get("user");
-// console.log(user);
+// const user = storage.get("user");
+const token = storage.get("token");
+// console.log(token);
 
 export default {
   //axios Authorization token
@@ -26,17 +27,17 @@ export default {
   uploadPhoto(body) {
     const config = {
       headers: {
-        Authorization: `Bearer ${user.token}`,
+        Authorization: `Bearer ${token}`,
         "content-type": "multipart/form-data",
       },
     };
-    console.log(api.uploadPhoto);
+    // console.log(api.uploadPhoto);
     return apiClient().post(api.uploadPhoto, body, config);
   },
   uploadPendingPhoto(body) {
     const config = {
       headers: {
-        Authorization: `Bearer ${user.token}`,
+        Authorization: `Bearer ${token}`,
         "content-type": "multipart/form-data",
       },
     };
@@ -44,6 +45,19 @@ export default {
   },
   editPending(body) {
     return apiClient().post(api.editPending, body);
+  },
+  exportToExcel(userId, body) {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      responseType: "blob",
+    };
+    // console.log(userId);
+    return apiClient().post(api.exportToExcel(userId), body, config);
+  },
+  updateUserInfo(userId, body) {
+    return apiClient().post(api.updateUserInfo(userId), body);
   },
 
   // all get
@@ -76,6 +90,9 @@ export default {
   },
   pendingDelete(userId) {
     return apiClient().get(api.pendingDelete(userId));
+  },
+  deleteExcel() {
+    return apiClient().get(api.deleteExcel);
   },
 
   // Authentication

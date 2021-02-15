@@ -6,6 +6,16 @@
         <el-row>
           <el-col :span="16">
             <el-form-item style="display: inline-block">
+              <el-select v-model="form.year" @change="getTableData">
+                <el-option
+                  v-for="(year, index) in years"
+                  :key="index"
+                  :value="year.selectedYear"
+                  :label="year.selectedYear"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item style="display: inline-block">
               <el-select v-model="form.month" @change="getTableData">
                 <el-option
                   v-for="(month, index) in months"
@@ -134,7 +144,7 @@
               style="margin-left: 10px"
               v-if="scope.row.fileName"
               v-bind:transactionId="scope.row.transactionId"
-              v-bind:token="user.token"
+              v-bind:token="token"
             />
             <el-button
               size="mini"
@@ -194,7 +204,7 @@ export default {
       form: {
         branchName: storage.get("user").branch.branchName,
         month: Number,
-        year: 2021,
+        year: Number,
       },
 
       months: [
@@ -210,6 +220,12 @@ export default {
         { name: "October", value: 10 },
         { name: "November", value: 11 },
         { name: "December", value: 12 },
+      ],
+      years: [
+        { selectedYear: new Date().getFullYear() - 3 },
+        { selectedYear: new Date().getFullYear() - 2 },
+        { selectedYear: new Date().getFullYear() - 1 },
+        { selectedYear: new Date().getFullYear() },
       ],
       search: "",
       pageOfItems: this.tableData,
@@ -273,17 +289,24 @@ export default {
         // },
       ],
       user: storage.get("user"),
+      token: storage.get("token"),
     };
   },
 
   created() {
     this.tableMaxHeight = window.document.body.clientHeight - 270;
     this.user = storage.get("user");
+    this.getCurrentYear();
     this.getCurrentMonth();
     this.getTableData();
   },
 
   methods: {
+    getCurrentYear() {
+      const date = new Date();
+      const year = date.getFullYear();
+      this.form.year = year;
+    },
     handleApprove(transactionId) {
       EventService.approveUpdate(transactionId, this.user.userId);
     },

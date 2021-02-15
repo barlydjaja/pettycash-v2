@@ -5,16 +5,6 @@
       <el-form ref="form" :model="form" :rules="rules" label-position="top">
         <el-row>
           <el-col :span="16">
-            <el-form-item style="display: inline-block">
-              <el-select v-model="form.month" @change="getTableData">
-                <el-option
-                  v-for="(month, index) in months"
-                  :key="index"
-                  :value="month.value"
-                  :label="month.name"
-                ></el-option>
-              </el-select>
-            </el-form-item>
             <el-form-item prop="branch" style="display: inline-block">
               <el-select
                 v-model="form.branchName"
@@ -173,7 +163,6 @@
 <script>
 import EventService from "@/services/EventService";
 import storage from "@/libs/storage";
-import axios from "axios";
 import FileSaver from "file-saver";
 import AddTransactions from "@/components/AddTransaction";
 import EditTransaction from "@/components/EditTransaction";
@@ -193,84 +182,67 @@ export default {
     return {
       form: {
         branchName: user.branch.branchName,
-        month: null,
-        year: 2021,
       },
-
-      months: [
-        { name: "January", value: 1 },
-        { name: "February", value: 2 },
-        { name: "March", value: 3 },
-        { name: "April", value: 4 },
-        { name: "May", value: 5 },
-        { name: "June", value: 6 },
-        { name: "Juli", value: 7 },
-        { name: "August", value: 8 },
-        { name: "September", value: 9 },
-        { name: "October", value: 10 },
-        { name: "November", value: 11 },
-        { name: "December", value: 12 },
-      ],
       search: "",
       pageOfItems: this.tableData,
       rules: {},
       tableData: [
-        {
-          transactionDate: 12,
-          user: {
-            username: "ahmad",
-          },
-          transactionType: {
-            transactionTypeName: "barang bekas",
-          },
-          description: "income",
-          amount: 123,
-          residue: 1233333,
-          fileName: null,
-          id: 12,
-        },
-        {
-          transactionDate: 13,
-          user: {
-            username: "dani",
-          },
-          transactionType: {
-            transactionTypeName: "barang baru",
-          },
-          description: "outcome",
-          amount: 12345,
-          residue: 0,
-          fileName: "ada disini",
-          id: 13,
-        },
-        {
-          transactionDate: 14,
-          user: {
-            username: "luna",
-          },
-          transactionType: {
-            transactionTypeName: "pribady",
-          },
-          description: "income",
-          amount: 123,
-          residue: 123,
-          fileName: null,
-          id: 14,
-        },
-        {
-          transactionDate: 15,
-          user: {
-            username: "beni",
-          },
-          transactionType: {
-            transactionTypeName: "personal",
-          },
-          description: "income",
-          amount: 321,
-          residue: 444,
-          fileName: "ada disini bro",
-          id: 15,
-        },
+        // {
+        //   transactionDate: 12,
+        //   user: {
+        //     username: "ahmad",
+        //   },
+        //   transactionType: {
+        //     transactionTypeName: "barang bekas",
+        //   },
+        //   description: "income",
+        //   amount: 123,
+        //   residue: 1233333,
+        //   fileName: null,
+        //   id: 12,
+        // },
+        // {
+        //   transactionDate: 13,
+        //   user: {
+        //     username: "dani",
+        //   },
+        //   transactionType: {
+        //     transactionTypeName: "barang baru",
+        //   },
+        //   description: "outcome",
+        //   amount: 12345,
+        //   residue: 0,
+        //   fileName: "ada disini",
+        //   id: 13,
+        // },
+        // {
+        //   transactionDate: 14,
+        //   user: {
+        //     username: "luna",
+        //   },
+        //   transactionType: {
+        //     transactionTypeName: "pribady",
+        //   },
+        //   description: "income",
+        //   amount: 123,
+        //   residue: 123,
+        //   fileName: null,
+        //   id: 14,
+        // },
+        // {
+        //   transactionDate: 15,
+        //   user: {
+        //     username: "beni",
+        //   },
+        //   transactionType: {
+        //     transactionTypeName: "personal",
+        //   },
+        //   description: "income",
+        //   amount: 321,
+        //   residue: 444,
+        //   fileName: "ada disini bro",
+        //   id: 15,
+        // },
       ],
       user,
     };
@@ -278,10 +250,16 @@ export default {
 
   created() {
     this.tableMaxHeight = window.document.body.clientHeight - 270;
+    this.getCurrentYear();
     this.getCurrentMonth();
     this.getTableData();
   },
   methods: {
+    getCurrentYear() {
+      const date = new Date();
+      const year = date.getFullYear();
+      this.form.year = year;
+    },
     handleReject(notTransactionId) {
       this.$confirm("This will Reject The Transaction. Continue?", "Warning", {
         confirmButtonText: "OK",
@@ -410,22 +388,14 @@ export default {
 
     // FIXME: Tambahin update year
     // updateYear(){}
-
     exportToExcel() {
-      //FIXME: first method
-
-      const url =
-        "http://10.69.72.99:8081/pettycash/v1/export/transaction?userId=1";
-      axios
-        .post(url, this.tableData, {
-          headers: {
-            Authorization: `Bearer ${this.user.token}`,
-          },
-          responseType: "blob",
-        })
-        .then((result) => {
-          // console.log(result);
-          FileSaver.saveAs(result.data);
+      const body = this.tableData;
+      EventService.exportToExcel(this.user.userId, body)
+        .then((res) => {
+          FileSaver.saveAs(res.data);
+          EventService.deleteExcel()
+            .then((res) => console.log(res))
+            .catch((err) => console.log(err));
         })
         .catch((err) => console.log(err));
     },

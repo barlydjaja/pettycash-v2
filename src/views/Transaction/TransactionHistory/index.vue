@@ -6,6 +6,16 @@
         <el-row>
           <el-col :span="16">
             <el-form-item style="display: inline-block">
+              <el-select v-model="form.year" @change="getTableData">
+                <el-option
+                  v-for="(year, index) in years"
+                  :key="index"
+                  :value="year.selectedYear"
+                  :label="year.selectedYear"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item style="display: inline-block">
               <el-select v-model="form.month" @change="getTableData">
                 <el-option
                   v-for="(month, index) in months"
@@ -20,6 +30,7 @@
                 v-model="form.branchName"
                 placeholder="pilih cabang"
                 @change="getTableData"
+                :disabled="this.user.role.roleName !== 'admin'"
               >
                 <el-option label="Jakarta" value="JAKARTA"></el-option>
                 <el-option label="Semarang" value="SEMARANG"></el-option>
@@ -80,6 +91,7 @@
           min-width="100"
         >
           <template slot-scope="scope">
+            <!-- {{ scope.row.transactionDate.toString() }} -->
             {{ scope.row.transactionDate.toString().split(" ")[0] }}
             <!-- Rp {{ autoDot(scope.row.amount) }} -->
           </template>
@@ -123,6 +135,7 @@
           prop="residue"
           :label="'Mutasi'"
           min-width="150"
+          v-if="this.user.role.roleName === 'admin'"
         >
           <template slot-scope="scope">
             Rp {{ autoDot(scope.row.residue) }}
@@ -145,7 +158,7 @@
               style="margin-left: 10px"
               v-if="scope.row.fileName"
               v-bind:transactionId="scope.row.transactionId"
-              v-bind:token="user.token"
+              v-bind:token="token"
             />
             <!-- <el-button
                   @click="handleDownload(scope.row.transactionId)"
@@ -183,7 +196,7 @@
 <script>
 import EventService from "@/services/EventService";
 import storage from "@/libs/storage";
-import axios from "axios";
+// import axios from "axios";
 import FileSaver from "file-saver";
 import AddTransactions from "@/components/AddTransaction";
 import EditTransaction from "@/components/EditTransaction";
@@ -206,7 +219,7 @@ export default {
       form: {
         branchName: storage.get("user").branch.branchName,
         month: Number,
-        year: 2021,
+        year: Number,
       },
 
       months: [
@@ -222,6 +235,12 @@ export default {
         { name: "October", value: 10 },
         { name: "November", value: 11 },
         { name: "December", value: 12 },
+      ],
+      years: [
+        { selectedYear: new Date().getFullYear() - 3 },
+        { selectedYear: new Date().getFullYear() - 2 },
+        { selectedYear: new Date().getFullYear() - 1 },
+        { selectedYear: new Date().getFullYear() },
       ],
       search: "",
       pageOfItems: this.tableData,
@@ -284,13 +303,15 @@ export default {
         //   id: 15,
         // },
       ],
-      user: storage.get("user"),
+      user: null,
+      token: storage.get("token"),
     };
   },
 
   created() {
     this.tableMaxHeight = window.document.body.clientHeight - 270;
     this.user = storage.get("user");
+    this.getCurrentYear();
     this.getCurrentMonth();
     this.getTableData();
   },
@@ -308,14 +329,14 @@ export default {
         .catch((err) => console.log(err));
     },
     onNewTransaction({ form, fileForm }) {
-      console.log(form);
+      // console.log(form);
       EventService.addNewTransaction(form)
         .then((res) => {
           // console.log(res);
           const { data, status } = res;
-          console.log("add new transaction ok, proceed to upload photo");
+          // console.log("add new transaction ok, proceed to upload photo");
           if (data && status === 200) {
-            console.log(data);
+            // console.log(data);
             fileForm.append(
               "transactionId",
               data.transactionId || data.notTransactionId
@@ -352,49 +373,43 @@ export default {
       return number.toLocaleString("id-ID");
     },
 
-    handleDownload(id) {
-      console.log(`id of ${id} will be downloaded`);
-    },
-
     onChangePage(pageOfItems) {
       this.pageOfItems = pageOfItems;
-      // console.log(pageOfItems);
     },
     getCurrentMonth() {
       const date = new Date();
-      const month = date.toLocaleString("default", {
-        month: "long",
-      });
       const monthNumber = date.getMonth() + 1;
       this.form.month = monthNumber;
-      return month;
     },
+
+    getCurrentYear() {
+      const date = new Date();
+      const year = date.getFullYear();
+      this.form.year = year;
+    },
+
     getTableData() {
       EventService.getAllTransactionsByMonthAndBranch(this.form).then((res) => {
         const { status, data } = res;
-        console.log(res);
-        if (status === 200) this.tableData = data.reverse();
+        // console.log(res);
+        if (status === 200)
+          this.tableData = data.reverse().filter((data) => {
+            // console.log(this.user.role.roleName);
+            if (this.user.role.roleName === "staff")
+              return data.user.username === this.user.username;
+            else if (this.user.role.roleName === "admin") return data;
+          });
       });
     },
 
-    // FIXME: Tambahin update year
-    // updateYear(){}
-
     exportToExcel() {
-      //FIXME: first method
-
-      const url =
-        "http://10.69.72.99:8081/pettycash/v1/export/transaction?userId=1";
-      axios
-        .post(url, this.tableData, {
-          headers: {
-            Authorization: `Bearer ${this.user.token}`,
-          },
-          responseType: "blob",
-        })
-        .then((result) => {
-          // console.log(result);
-          FileSaver.saveAs(result.data);
+      const body = this.tableData;
+      EventService.exportToExcel(this.user.userId, body)
+        .then((res) => {
+          FileSaver.saveAs(res.data);
+          EventService.deleteExcel()
+            .then((res) => console.log(res))
+            .catch((err) => console.log(err));
         })
         .catch((err) => console.log(err));
     },

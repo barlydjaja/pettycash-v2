@@ -10,7 +10,10 @@ export default {
   viewNotApprovedTransactions(userId) {
     return `${version}/${view}/not-approved-transaction?userId=${userId}`;
   },
-  exportToExcel: `${version}/export/transaction`,
+  exportToExcel(userId) {
+    return `${version}/export/transaction?userId=${userId}`;
+  },
+  deleteExcel: `${version}/export/delete-temp`,
   addNewTransaction: `${version}/transaction/add`,
   updateTransaction(transactionId) {
     return `${version}/transaction/update?transactionId=${transactionId}`;
@@ -43,5 +46,8 @@ export default {
   },
   pendingDelete(userId) {
     return `${version}/view/pending-delete?userId=${userId}`;
+  },
+  updateUserInfo(userId) {
+    return `${version}/profile/update?userId=${userId}`;
   },
 };

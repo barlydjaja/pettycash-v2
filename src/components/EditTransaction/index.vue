@@ -18,7 +18,11 @@
         </el-form-item>
         <!-- TransactionType -->
         <el-form-item label="Jenis Transaksi:">
-          <el-select placeholder="Choose One" v-model="form.receipt">
+          <el-select
+            placeholder="Choose One"
+            v-model="form.receipt"
+            style="width: 100%"
+          >
             <el-option
               v-for="(transactionType, index) in transactionsType"
               :key="index"
@@ -29,7 +33,11 @@
         </el-form-item>
         <!-- TransactionName -->
         <el-form-item label="Nama Transaksi:">
-          <el-select v-model="form.transactionTypeId" placeholder="Choose One">
+          <el-select
+            v-model="form.transactionTypeId"
+            placeholder="Choose One"
+            style="width: 100%"
+          >
             <el-option
               v-for="(transaction, index) in transactionsName"
               :key="index"

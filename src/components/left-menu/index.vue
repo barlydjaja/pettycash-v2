@@ -31,7 +31,7 @@
         <li>
           <!-- FIXME: bind class active diubah dinamis -->
           <router-link
-            :to="{ name: 'TransactionHistory' }"
+            :to="{ name: 'UserInfo' }"
             class="menu_icon menu_icon_user"
             :class="{ active: false }"
             >Profil User</router-link

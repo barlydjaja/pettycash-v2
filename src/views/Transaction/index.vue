@@ -1,4 +1,3 @@
-// FIXME: ganti class binding untuk buka tutup
 <template>
   <div class="page page-conf">
     <el-scrollbar
