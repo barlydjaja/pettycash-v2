@@ -94,6 +94,9 @@ export default {
   deleteExcel() {
     return apiClient().get(api.deleteExcel);
   },
+  rejectDelete(transactionId) {
+    return apiClient().get(api.rejectDelete(transactionId));
+  },
 
   // Authentication
   loggedIn() {

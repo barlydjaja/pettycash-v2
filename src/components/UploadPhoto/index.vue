@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     handleUpload() {
-      console.log(this.$props.transactionId);
+      // console.log(this.$props.transactionId);
       this.file = this.$refs.file.files[0];
       let formData = new FormData();
       formData.append("file", this.file);

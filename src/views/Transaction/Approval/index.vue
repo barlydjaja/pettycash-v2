@@ -4,7 +4,7 @@
     <div class="search_panel_form">
       <el-form ref="form" :model="form" :rules="rules" label-position="top">
         <el-row>
-          <el-col :span="16">
+          <!-- <el-col :span="16">
             <el-form-item prop="branch" style="display: inline-block">
               <el-select
                 v-model="form.branchName"
@@ -15,8 +15,8 @@
                 <el-option label="Semarang" value="SEMARANG"></el-option>
               </el-select>
             </el-form-item>
-          </el-col>
-          <el-col :span="8" class="search_box">
+          </el-col> -->
+          <el-col :span="8" class="search_box" style="float: right">
             <el-form-item prop="search" style="display: inline-block">
               <el-input
                 placeholder="search"
@@ -34,7 +34,11 @@
               v-bind:userId="this.user.userId"
             />
           </el-col>
-          <el-col :span="8" class="search_box">
+          <el-col
+            :span="8"
+            class="search_box"
+            v-show="this.user.role.roleName === 'admin'"
+          >
             <el-button @click="exportToExcel">Excel Download</el-button>
           </el-col>
         </el-row>
@@ -50,13 +54,13 @@
             : tableData.filter(
                 (data) =>
                   data.transactionDate.toString().includes(search) ||
+                  data.user.branch.branchName.toLowerCase().includes(search) ||
                   data.user.username.toLowerCase().includes(search) ||
                   data.transactionType.transactionTypeName
                     .toLowerCase()
                     .includes(search) ||
                   data.description.toLowerCase().includes(search) ||
-                  data.amount.toString().includes(search) ||
-                  data.residue.toString().includes(search)
+                  data.amount.toString().includes(search)
               )
         "
         :default-sort="{ prop: 'transactionDate', order: 'descending' }"
@@ -77,13 +81,19 @@
           sortable
           prop="user.username"
           :label="'Nama'"
-          min-width="150"
+          min-width="100"
+        ></el-table-column>
+        <el-table-column
+          sortable
+          prop="user.branch.branchName"
+          :label="'Cabang'"
+          min-width="100"
         ></el-table-column>
         <el-table-column
           sortable
           prop="transactionType.transactionTypeName"
           :label="'Transaksi'"
-          min-width="150"
+          min-width="120"
         ></el-table-column>
         <el-table-column
           sortable
@@ -111,7 +121,7 @@
         <el-table-column prop="fileName" :label="'receipt'" min-width="200">
           <template slot-scope="scope">
             <EditTransaction
-              v-bind:transactionId="scope.row.notTransactionId"
+              v-bind:notTransactionId="scope.row.notTransactionId"
               v-on:edit-transaction="onEditTransaction"
             />
             <UploadPhoto
@@ -123,7 +133,7 @@
               style="margin-left: 10px"
               v-if="scope.row.fileName"
               v-bind:transactionId="scope.row.notTransactionId"
-              v-bind:token="user.token"
+              v-bind:token="token"
             />
 
             <el-button
@@ -245,6 +255,7 @@ export default {
         // },
       ],
       user,
+      token: storage.get("token"),
     };
   },
 
@@ -269,11 +280,13 @@ export default {
         .then(() => {
           EventService.rejectApprove(notTransactionId)
             .then((res) => {
-              this.$message({
-                type: "warning",
-                message: "Transaction Rejected",
-              });
-              console.log(res);
+              const { status } = res;
+              if (status === 200) {
+                this.$message({
+                  type: "warning",
+                  message: "Transaction Rejected",
+                });
+              }
               this.getTableData();
             })
             .catch((err) => {
@@ -288,31 +301,36 @@ export default {
         });
     },
     onNewTransaction({ form, fileForm }) {
-      console.log(form);
       EventService.addNewTransaction(form)
         .then((res) => {
-          // console.log(res);
           const { data, status } = res;
-          console.log("add new transaction ok, proceed to upload photo");
           if (data && status === 200) {
-            console.log(data);
-            fileForm.append(
-              "transactionId",
-              data.transactionId || data.notTransactionId
-            );
-            EventService.uploadPhoto(fileForm)
-              .then((res) => {
-                const { data, status } = res;
-                if (data && status === 200) this.getTableData();
-              })
-              .catch((err) => console.log(err.message));
+            if (fileForm) {
+              fileForm.append(
+                "transactionId",
+                data.transactionId || data.notTransactionId
+              );
+              EventService.uploadPhoto(fileForm)
+                .then((res) => {
+                  const { data, status } = res;
+                  this.$message.success("success");
+                  if (data && status === 200) this.getTableData();
+                })
+                .catch((err) => console.log(err.message));
+            } else {
+              this.$message.success("success");
+              this.getTableData();
+            }
+          } else {
+            this.$message.alert("something went wrong");
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          this.$message.error("lengkapi data");
+        });
     },
     handleApprove(notTransactionId) {
-      console.log(notTransactionId);
-      console.log(this.user.userId);
       EventService.approve(notTransactionId, this.user.userId)
         .then((res) => {
           const { data, status } = res;
@@ -337,9 +355,19 @@ export default {
         .catch((err) => console.log(err));
     },
     onEditTransaction({ form }) {
-      console.log(form);
-      EventService.updateNotApprovedTransaction(form).then((res) =>
-        console.log(res)
+      // console.log(form);
+      EventService.updateNotApprovedTransaction(form).then(
+        (res) => {
+          const { status, data } = res;
+          if (status === 200 && data) {
+            this.$message({
+              type: "success",
+              message: "Table Updated",
+            });
+            this.getTableData();
+          }
+        }
+        // console.log(res)
       );
     },
     onSearch(search) {
@@ -352,10 +380,6 @@ export default {
 
     autoDot(number) {
       return number.toLocaleString("id-ID");
-    },
-
-    handleDownload(id) {
-      console.log(`id of ${id} will be downloaded`);
     },
 
     onChangePage(pageOfItems) {
@@ -374,7 +398,7 @@ export default {
     getTableData() {
       EventService.getNotApprovedTransactions(this.user.userId).then((res) => {
         const { status, data } = res;
-        console.log(res);
+        // console.log(res);
         if (status === 200) this.tableData = data.reverse();
       });
     },

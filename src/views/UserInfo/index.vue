@@ -120,7 +120,7 @@
 import EventService from "@/services/EventService";
 import LeftMenu from "@/components/left-menu";
 import storage from "@/libs/storage";
-const user = storage.get("user");
+// const user = storage.get("user");
 export default {
   name: "UserInfo",
   components: {
@@ -170,14 +170,15 @@ export default {
         checkPass: "",
       },
       dialogChangePassword: false,
-      balance: "Rp " + user.branch.balance.toLocaleString("id-ID"),
+      balance:
+        "Rp " + storage.get("user").branch.balance.toLocaleString("id-ID"),
       form: {
-        name: user.username,
-        email: user.email,
-        branchName: user.branch.branchName,
+        name: null,
+        email: null,
+        branchName: null,
         oldPassword: "",
-        department: user.department,
-        role: user.role.roleName,
+        department: null,
+        role: null,
       },
       rules: {
         oldPassword: [
@@ -204,7 +205,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          const userId = user.userId;
+          const userId = this.userData.userId;
           const body = this.ruleForm;
           EventService.updateUserInfo(userId, body)
             .then((res) => {
@@ -232,7 +233,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           const body = this.form;
-          const userId = user.userId;
+          const userId = this.userData.userId;
           EventService.updateUserInfo(userId, body)
             .then((res) => {
               console.log(res.data);
@@ -252,11 +253,12 @@ export default {
               }
             })
             .catch((err) => {
-              this.$message({
-                type: "alert",
-                message: `Wrong Password `,
-              }),
-                console.log(err.response.status);
+              if (err.response.status === 500) {
+                this.$message({
+                  type: "alert",
+                  message: `Wrong Password `,
+                });
+              }
             });
         } else {
           console.log("eror");
@@ -264,6 +266,15 @@ export default {
         }
       });
     },
+  },
+  created() {
+    const user = storage.get("user");
+    const { username, email, branch, department, role } = user;
+    this.form.name = username;
+    this.form.email = email;
+    this.form.branchName = branch.branchName;
+    this.form.department = department;
+    this.form.role = role.roleName;
   },
 };
 </script>

@@ -4,17 +4,7 @@
     <div class="search_panel_form">
       <el-form ref="form" :model="form" :rules="rules" label-position="top">
         <el-row>
-          <el-col :span="16">
-            <el-form-item style="display: inline-block">
-              <el-select v-model="form.month" @change="getTableData">
-                <el-option
-                  v-for="(month, index) in months"
-                  :key="index"
-                  :value="month.value"
-                  :label="month.name"
-                ></el-option>
-              </el-select>
-            </el-form-item>
+          <!-- <el-col :span="16">
             <el-form-item style="display: inline-block">
               <el-select
                 v-model="form.branchName"
@@ -25,8 +15,8 @@
                 <el-option label="Semarang" value="SEMARANG"></el-option>
               </el-select>
             </el-form-item>
-          </el-col>
-          <el-col :span="8" class="search_box">
+          </el-col> -->
+          <el-col :span="8" class="search_box" style="float: right">
             <el-form-item prop="search" style="display: inline-block">
               <el-input
                 placeholder="search"
@@ -45,7 +35,11 @@
             />
           </el-col> -->
           <el-col :span="8" class="search_box" style="float: right">
-            <el-button @click="exportToExcel">Excel Download</el-button>
+            <el-button
+              @click="exportToExcel"
+              v-show="this.user.role.roleName === 'admin'"
+              >Excel Download</el-button
+            >
           </el-col>
         </el-row>
       </el-form>
@@ -255,11 +249,21 @@ export default {
   created() {
     this.tableMaxHeight = window.document.body.clientHeight - 270;
     this.user = storage.get("user");
-    this.getCurrentMonth();
     this.getTableData();
   },
 
   methods: {
+    handleReject(transactionId) {
+      EventService.rejectDelete(transactionId)
+        .then((res) => {
+          const { status } = res;
+          if (status === 200) {
+            this.$message.warning("Reject Delete");
+            this.getTableData();
+          }
+        })
+        .catch((err) => console.log(err));
+    },
     handleApprove(transactionId) {
       EventService.deleteTransaction(transactionId, this.user.userId);
     },
@@ -281,25 +285,15 @@ export default {
     onChangePage(pageOfItems) {
       this.pageOfItems = pageOfItems;
     },
-    getCurrentMonth() {
-      const date = new Date();
-      const month = date.toLocaleString("default", {
-        month: "long",
-      });
-      const monthNumber = date.getMonth() + 1;
-      this.form.month = monthNumber;
-      return month;
-    },
     getTableData() {
-      EventService.pendingDelete(this.user.userId).then((res) => {
-        const { status, data } = res;
-        console.log(res);
-        if (status === 200) this.tableData = data.reverse();
-      });
+      EventService.pendingDelete(this.user.userId)
+        .then((res) => {
+          const { status, data } = res;
+          // console.log(res);
+          if (status === 200) this.tableData = data.reverse();
+        })
+        .catch((err) => console.log(err));
     },
-
-    // FIXME: Tambahin update year
-    // updateYear(){}
 
     exportToExcel() {
       const url =

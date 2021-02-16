@@ -54,9 +54,9 @@
             type="number"
           ></el-input
         ></el-form-item>
-        <el-card class="box-card">
+        <!-- <el-card class="box-card">
           <pre>{{ form }}</pre>
-        </el-card>
+        </el-card> -->
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editDialog = false">Cancel</el-button>

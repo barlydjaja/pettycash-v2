@@ -40,7 +40,10 @@ export default {
                 this.$emit("delete-transaction");
               }
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+              console.log(err);
+              if (err.response.status === 500) this.$message.error("error");
+            });
         })
         .catch(() => {
           this.$message({

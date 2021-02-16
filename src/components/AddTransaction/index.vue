@@ -9,7 +9,7 @@
       width="30%"
     >
       <!-- form begins here -->
-      <el-form :label-position="'top'" :model="form">
+      <el-form :label-position="'top'" :model="form" ref="form">
         <!-- Description -->
         <el-form-item label="Deskripsi:">
           <el-input v-model="form.description"></el-input>
@@ -45,12 +45,12 @@
           ></el-input
         ></el-form-item>
       </el-form>
-      <label for="imageFile"> Receipt </label>
+      <label for="imageFile"> Receipt (opsional) </label>
       <br />
       <input type="file" ref="file" accept="image/*" id="imageFile" />
-      <!-- <el-card class="box-card">
+      <el-card class="box-card">
         <pre>{{ form }}</pre>
-      </el-card> -->
+      </el-card>
       <span slot="footer" class="dialog-footer">
         <el-button @click="transactionDialog = false">cancel</el-button>
         <el-button @click="handleSubmit">Submit</el-button>
@@ -95,12 +95,16 @@ export default {
   },
   methods: {
     handleSubmit() {
-      this.fileForm.append("file", this.$refs.file.files[0]);
+      // console.log(this.$refs.file.files.length > 0);
+      if (this.$refs.file.files.length > 0)
+        this.fileForm.append("file", this.$refs.file.files[0]);
       this.$emit("new-transaction", {
         form: this.form,
-        fileForm: this.fileForm,
+        fileForm: this.$refs.file.files.length > 0 ? this.fileForm : null,
       });
       this.transactionDialog = false;
+      this.form = { userId: this.$props.userId };
+      this.fileForm = new FormData();
     },
   },
 };

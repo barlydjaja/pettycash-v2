@@ -104,7 +104,7 @@ export default {
         const body = this.form;
         EventService.login(body)
           .then((res) => {
-            console.log(res.data);
+            // console.log(res.data);
             const { status, data } = res;
             if (status === 200) {
               const { token, user } = data;
@@ -112,11 +112,18 @@ export default {
               storage.set("token", token);
               resolve();
               this.$router.push({ name: "TransactionHistory" });
+              this.$message.success("Login Success");
             } else {
               reject();
             }
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            console.log(err);
+            this.$message({
+              type: "error",
+              message: "wrong username/password",
+            });
+          });
       });
     },
   },

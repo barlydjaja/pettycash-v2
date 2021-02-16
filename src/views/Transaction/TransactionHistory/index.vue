@@ -55,7 +55,11 @@
               v-bind:userId="this.user.userId"
             />
           </el-col>
-          <el-col :span="8" class="search_box">
+          <el-col
+            :span="8"
+            class="search_box"
+            v-show="this.user.role.roleName === 'admin'"
+          >
             <el-button @click="exportToExcel">Excel Download</el-button>
           </el-col>
         </el-row>
@@ -329,27 +333,34 @@ export default {
         .catch((err) => console.log(err));
     },
     onNewTransaction({ form, fileForm }) {
-      // console.log(form);
       EventService.addNewTransaction(form)
         .then((res) => {
-          // console.log(res);
           const { data, status } = res;
-          // console.log("add new transaction ok, proceed to upload photo");
           if (data && status === 200) {
-            // console.log(data);
-            fileForm.append(
-              "transactionId",
-              data.transactionId || data.notTransactionId
-            );
-            EventService.uploadPhoto(fileForm)
-              .then((res) => {
-                const { data, status } = res;
-                if (data && status === 200) this.getTableData();
-              })
-              .catch((err) => console.log(err.message));
+            if (fileForm) {
+              fileForm.append(
+                "transactionId",
+                data.transactionId || data.notTransactionId
+              );
+              EventService.uploadPhoto(fileForm)
+                .then((res) => {
+                  const { data, status } = res;
+                  this.$message.success("success");
+                  if (data && status === 200) this.getTableData();
+                })
+                .catch((err) => console.log(err.message));
+            } else {
+              this.$message.success("success");
+              this.getTableData();
+            }
+          } else {
+            this.$message.alert("something went wrong");
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          this.$message.error("lengkapi data");
+        });
     },
     onEditTransaction({ form, transactionId }) {
       EventService.updateTransaction(form, transactionId)
@@ -359,7 +370,13 @@ export default {
             this.getTableData();
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          const { status } = err.response;
+          if (status === 500) {
+            this.$message.error("lengkapi data");
+          }
+        });
     },
     onSearch(search) {
       this.search = search;
@@ -408,7 +425,7 @@ export default {
         .then((res) => {
           FileSaver.saveAs(res.data);
           EventService.deleteExcel()
-            .then((res) => console.log(res))
+            .then((res) => console.log(res.status))
             .catch((err) => console.log(err));
         })
         .catch((err) => console.log(err));

@@ -4,27 +4,7 @@
     <div class="search_panel_form">
       <el-form ref="form" :model="form" :rules="rules" label-position="top">
         <el-row>
-          <el-col :span="16">
-            <el-form-item style="display: inline-block">
-              <el-select v-model="form.year" @change="getTableData">
-                <el-option
-                  v-for="(year, index) in years"
-                  :key="index"
-                  :value="year.selectedYear"
-                  :label="year.selectedYear"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item style="display: inline-block">
-              <el-select v-model="form.month" @change="getTableData">
-                <el-option
-                  v-for="(month, index) in months"
-                  :key="index"
-                  :value="month.value"
-                  :label="month.name"
-                ></el-option>
-              </el-select>
-            </el-form-item>
+          <!-- <el-col :span="16">
             <el-form-item style="display: inline-block">
               <el-select
                 v-model="form.branchName"
@@ -35,8 +15,8 @@
                 <el-option label="Semarang" value="SEMARANG"></el-option>
               </el-select>
             </el-form-item>
-          </el-col>
-          <el-col :span="8" class="search_box">
+          </el-col> -->
+          <el-col :span="8" class="search_box" style="float: right">
             <el-form-item prop="search" style="display: inline-block">
               <el-input
                 placeholder="search"
@@ -54,7 +34,12 @@
               v-bind:userId="this.user.userId"
             />
           </el-col> -->
-          <el-col :span="8" class="search_box" style="float: right">
+          <el-col
+            :span="8"
+            class="search_box"
+            style="float: right"
+            v-show="this.user.role.roleName === 'admin'"
+          >
             <el-button @click="exportToExcel">Excel Download</el-button>
           </el-col>
         </el-row>
@@ -183,13 +168,10 @@
 <script>
 import EventService from "@/services/EventService";
 import storage from "@/libs/storage";
-import axios from "axios";
 import FileSaver from "file-saver";
-// import AddTransactions from "@/components/AddTransaction";
 import EditTransaction from "@/components/EditTransaction";
 import UploadPhoto from "@/components/UploadPhoto";
 import DownloadPhoto from "@/components/DownloadPhoto";
-// const user = storage.get("user");
 
 export default {
   name: "TransactionHistory",
@@ -296,32 +278,32 @@ export default {
   created() {
     this.tableMaxHeight = window.document.body.clientHeight - 270;
     this.user = storage.get("user");
-    this.getCurrentYear();
-    this.getCurrentMonth();
     this.getTableData();
   },
 
   methods: {
-    getCurrentYear() {
-      const date = new Date();
-      const year = date.getFullYear();
-      this.form.year = year;
-    },
     handleApprove(transactionId) {
-      EventService.approveUpdate(transactionId, this.user.userId);
+      EventService.approveUpdate(transactionId, this.user.userId).then(
+        (res) => {
+          const { status } = res;
+          if (status === 200) {
+            this.$message.success("transaction approved");
+            this.getTableData();
+          }
+        }
+      );
     },
     handleReject(pendingTransactionId) {
       EventService.rejectUpdate(pendingTransactionId)
         .then((res) => {
-          this.$message({
-            type: "warning",
-            message: "Transaction Rejected",
-          });
-          console.log(res);
-          this.getTableData();
-        })
-        .catch((err) => {
-          console.log(err);
+          const { status } = res;
+          if (status === 200) {
+            this.$message({
+              type: "warning",
+              message: "Transaction Rejected",
+            });
+            this.getTableData();
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -344,6 +326,7 @@ export default {
           const { data, status } = res;
           // console.log(res)
           if (data && status === 200) {
+            this.$message.success("Update Sucess");
             this.getTableData();
           }
         })
@@ -363,46 +346,25 @@ export default {
       }
     },
 
-    handleDownload(id) {
-      console.log(`id of ${id} will be downloaded`);
-    },
-
     onChangePage(pageOfItems) {
       this.pageOfItems = pageOfItems;
     },
-    getCurrentMonth() {
-      const date = new Date();
-      const month = date.toLocaleString("default", {
-        month: "long",
-      });
-      const monthNumber = date.getMonth() + 1;
-      this.form.month = monthNumber;
-      return month;
-    },
+
     getTableData() {
       EventService.getPendingUpdate(this.user.userId).then((res) => {
         const { status, data } = res;
-        console.log(res);
+        // console.log(res);
         if (status === 200) this.tableData = data.reverse();
       });
     },
-
-    // FIXME: Tambahin update year
-    // updateYear(){}
-
     exportToExcel() {
-      const url =
-        "http://10.69.72.99:8081/pettycash/v1/export/transaction?userId=1";
-      axios
-        .post(url, this.tableData, {
-          headers: {
-            Authorization: `Bearer ${this.user.token}`,
-          },
-          responseType: "blob",
-        })
-        .then((result) => {
-          // console.log(result);
-          FileSaver.saveAs(result.data);
+      const body = this.tableData;
+      EventService.exportToExcel(this.user.userId, body)
+        .then((res) => {
+          FileSaver.saveAs(res.data);
+          EventService.deleteExcel()
+            .then((res) => console.log(res))
+            .catch((err) => console.log(err));
         })
         .catch((err) => console.log(err));
     },

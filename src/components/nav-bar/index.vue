@@ -35,7 +35,9 @@
         <div class="user_operation_card">
           <i class="user_operation_icon el-icon-caret-top"></i>
           <ul class="user_operation_list">
-            <li @click="handleLogout"><a href="#" class="logout">LOGOUT</a></li>
+            <li @click="handleLogout">
+              <a class="logout">LOGOUT</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -60,9 +62,9 @@ export default {
   },
   methods: {
     handleLogout() {
-      console.log("logout");
+      // console.log("logout");
       storage.removeAll();
-      this.$router.push({ name: "Login" }).catch();
+      this.$router.push({ name: "Login" });
     },
     toggleMenuShow(show) {
       this.$store.commit("toggleMenuShow", show);
