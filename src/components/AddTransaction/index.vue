@@ -48,9 +48,9 @@
       <label for="imageFile"> Receipt (opsional) </label>
       <br />
       <input type="file" ref="file" accept="image/*" id="imageFile" />
-      <el-card class="box-card">
+      <!-- <el-card class="box-card">
         <pre>{{ form }}</pre>
-      </el-card>
+      </el-card> -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="transactionDialog = false">cancel</el-button>
         <el-button @click="handleSubmit">Submit</el-button>
