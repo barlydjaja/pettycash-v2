@@ -123,7 +123,10 @@
             </el-button>
 
             <el-popconfirm
-              v-if="user.role.roleName === 'admin'"
+              v-if="
+                user.role.roleName === 'admin' ||
+                user.role.roleName === 'riliser'
+              "
               icon="el-icon-info"
               icon-color="green"
               title="Approve Transaction?"
@@ -265,7 +268,14 @@ export default {
         .catch((err) => console.log(err));
     },
     handleApprove(transactionId) {
-      EventService.deleteTransaction(transactionId, this.user.userId);
+      EventService.deleteTransaction(transactionId, this.user.userId).then(
+        (res) => {
+          const { status } = res;
+          if (status === 200) {
+            this.message.alert("Transaction Deleted");
+          }
+        }
+      );
     },
 
     onSearch(search) {

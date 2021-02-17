@@ -83,13 +83,19 @@
           sortable
           prop="user.username"
           :label="'Nama'"
-          min-width="150"
+          min-width="100"
+        ></el-table-column>
+        <el-table-column
+          sortable
+          prop="user.branch.branchName"
+          :label="'Cabang'"
+          min-width="100"
         ></el-table-column>
         <el-table-column
           sortable
           prop="transactionType.transactionTypeName"
           :label="'Transaksi'"
-          min-width="150"
+          min-width="120"
         ></el-table-column>
         <el-table-column
           sortable

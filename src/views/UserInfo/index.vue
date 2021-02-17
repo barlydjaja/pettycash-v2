@@ -52,7 +52,13 @@
             <el-form-item label="Role">
               <el-input v-model="form.role" disabled></el-input>
             </el-form-item>
-            <el-form-item label="Saldo Cabang">
+            <el-form-item
+              label="Saldo Cabang"
+              v-show="
+                this.userData.role.roleName === 'admin' ||
+                this.userData.role.roleName === 'riliser'
+              "
+            >
               <el-input v-model="balance" disabled></el-input>
             </el-form-item>
             <el-form-item style="float: right" class="mr-5 mt-2">

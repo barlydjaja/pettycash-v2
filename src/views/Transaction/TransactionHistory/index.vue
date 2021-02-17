@@ -52,6 +52,7 @@
           <el-col :span="16">
             <AddTransactions
               v-on:new-transaction="onNewTransaction"
+              v-bind:loading="isLoadingAddTransaction"
               v-bind:userId="this.user.userId"
             />
           </el-col>
@@ -68,6 +69,7 @@
     <!-- data table begin -->
     <div class="data_table_panel">
       <el-table
+        v-loading="isLoadingTable"
         highlight-current-row
         :data="
           !search
@@ -139,7 +141,10 @@
           prop="residue"
           :label="'Mutasi'"
           min-width="150"
-          v-if="this.user.role.roleName === 'admin'"
+          v-if="
+            this.user.role.roleName === 'admin' ||
+            this.user.role.roleName === 'riliser'
+          "
         >
           <template slot-scope="scope">
             Rp {{ autoDot(scope.row.residue) }}
@@ -148,10 +153,11 @@
         <el-table-column prop="fileName" :label="'receipt'" min-width="200">
           <template slot-scope="scope">
             <EditTransaction
-              v-bind:pendingUpdate="scope.row.pendingUpdate"
-              v-bind:userId="user.userId"
-              v-bind:transactionId="scope.row.transactionId"
+              :pendingUpdate="scope.row.pendingUpdate"
+              :userId="user.userId"
+              :transactionId="scope.row.transactionId"
               v-on:edit-transaction="onEditTransaction"
+              :loading="isLoadingEditTransaction"
             />
             <UploadPhoto
               v-show="!scope.row.fileName"
@@ -192,6 +198,7 @@
       <jw-pagination
         :items="tableData"
         @changePage="onChangePage"
+        :pageSize="25"
       ></jw-pagination>
     </div>
   </div>
@@ -220,6 +227,9 @@ export default {
   },
   data() {
     return {
+      isLoadingTable: false,
+      isLoadingEditTransaction: false,
+      isLoadingAddTransaction: false,
       form: {
         branchName: storage.get("user").branch.branchName,
         month: Number,
@@ -333,6 +343,7 @@ export default {
         .catch((err) => console.log(err));
     },
     onNewTransaction({ form, fileForm }) {
+      this.isLoadingAddTransaction = true;
       EventService.addNewTransaction(form)
         .then((res) => {
           const { data, status } = res;
@@ -353,6 +364,7 @@ export default {
               this.$message.success("success");
               this.getTableData();
             }
+            this.isLoadingAddTransaction = false;
           } else {
             this.$message.alert("something went wrong");
           }
@@ -363,11 +375,13 @@ export default {
         });
     },
     onEditTransaction({ form, transactionId }) {
+      this.isLoadingEditTransaction = true;
       EventService.updateTransaction(form, transactionId)
         .then((res) => {
           const { data, status } = res;
           if (data.message && status === 200) {
             this.getTableData();
+            this.isLoadingEditTransaction = false;
           }
         })
         .catch((err) => {
@@ -375,6 +389,7 @@ export default {
           const { status } = err.response;
           if (status === 500) {
             this.$message.error("lengkapi data");
+            this.isLoadingEditTransaction = false;
           }
         });
     },
@@ -406,17 +421,28 @@ export default {
     },
 
     getTableData() {
-      EventService.getAllTransactionsByMonthAndBranch(this.form).then((res) => {
-        const { status, data } = res;
-        // console.log(res);
-        if (status === 200)
-          this.tableData = data.reverse().filter((data) => {
-            // console.log(this.user.role.roleName);
-            if (this.user.role.roleName === "staff")
-              return data.user.username === this.user.username;
-            else if (this.user.role.roleName === "admin") return data;
-          });
-      });
+      this.isLoadingTable = true;
+      EventService.getAllTransactionsByMonthAndBranch(this.form)
+        .then((res) => {
+          const { status, data } = res;
+          // console.log(res);
+          if (status === 200)
+            this.tableData = data.reverse().filter((data) => {
+              // console.log(this.user.role.roleName);
+              if (this.user.role.roleName === "staff")
+                return data.user.username === this.user.username;
+              else if (
+                this.user.role.roleName === "admin" ||
+                this.user.role.roleName === "riliser"
+              )
+                return data;
+            });
+          this.isLoadingTable = false;
+        })
+        .catch((err) => {
+          console.log(err);
+          this.mesage.$error("can't get table data");
+        });
     },
 
     exportToExcel() {

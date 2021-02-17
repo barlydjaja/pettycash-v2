@@ -81,7 +81,7 @@
           sortable
           prop="user.username"
           :label="'Nama'"
-          min-width="100"
+          min-width="120"
         ></el-table-column>
         <el-table-column
           sortable
@@ -118,7 +118,7 @@
           </template></el-table-column
         >
 
-        <el-table-column prop="fileName" :label="'receipt'" min-width="200">
+        <el-table-column prop="fileName" :label="'receipt'" min-width="240">
           <template slot-scope="scope">
             <EditTransaction
               v-bind:notTransactionId="scope.row.notTransactionId"

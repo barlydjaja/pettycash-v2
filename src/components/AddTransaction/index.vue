@@ -1,6 +1,9 @@
 <template>
   <div>
-    <el-button @click="transactionDialog = true">add transaction</el-button>
+    <el-button @click="transactionDialog = true">
+      <span> add transaction </span>
+      <i class="el-icon-loading" v-show="loading"></i>
+    </el-button>
 
     <!-- dialog starts here -->
     <el-dialog
@@ -66,6 +69,7 @@ export default {
   name: "AddTransactions",
   props: {
     userId: Number,
+    loading: Boolean,
   },
   data() {
     return {

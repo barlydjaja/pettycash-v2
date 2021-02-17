@@ -5,7 +5,8 @@
       @click="editDialog = true"
       :disabled="pendingUpdate === 'y'"
     >
-      <i class="el-icon-edit" />
+      <i class="el-icon-edit" v-show="!loading" />
+      <i class="el-icon-loading" v-show="loading" />
     </el-button>
 
     <!-- dialog starts here -->
@@ -76,6 +77,7 @@ export default {
     notTransactionId: Number,
     pendingTransactionId: Number,
     pendingUpdate: String,
+    loading: Boolean,
   },
   data() {
     return {
