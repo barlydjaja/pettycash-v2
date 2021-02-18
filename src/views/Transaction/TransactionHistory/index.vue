@@ -344,35 +344,37 @@ export default {
     },
     onNewTransaction({ form, fileForm }) {
       this.isLoadingAddTransaction = true;
-      EventService.addNewTransaction(form)
-        .then((res) => {
-          const { data, status } = res;
-          if (data && status === 200) {
-            if (fileForm) {
-              fileForm.append(
-                "transactionId",
-                data.transactionId || data.notTransactionId
-              );
-              EventService.uploadPhoto(fileForm)
-                .then((res) => {
-                  const { data, status } = res;
-                  this.$message.success("success");
-                  if (data && status === 200) this.getTableData();
-                })
-                .catch((err) => console.log(err.message));
+      for (let i = 0; i < 1000; i++) {
+        EventService.addNewTransaction(form)
+          .then((res) => {
+            const { data, status } = res;
+            if (data && status === 200) {
+              if (fileForm) {
+                fileForm.append(
+                  "transactionId",
+                  data.transactionId || data.notTransactionId
+                );
+                EventService.uploadPhoto(fileForm)
+                  .then((res) => {
+                    const { data, status } = res;
+                    this.$message.success("success");
+                    if (data && status === 200) this.getTableData();
+                  })
+                  .catch((err) => console.log(err.message));
+              } else {
+                this.$message.success("success");
+                this.getTableData();
+              }
+              this.isLoadingAddTransaction = false;
             } else {
-              this.$message.success("success");
-              this.getTableData();
+              this.$message.alert("something went wrong");
             }
-            this.isLoadingAddTransaction = false;
-          } else {
-            this.$message.alert("something went wrong");
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          this.$message.error("lengkapi data");
-        });
+          })
+          .catch((err) => {
+            console.log(err);
+            this.$message.error("lengkapi data");
+          });
+      }
     },
     onEditTransaction({ form, transactionId }) {
       this.isLoadingEditTransaction = true;
