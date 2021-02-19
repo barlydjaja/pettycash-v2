@@ -342,39 +342,40 @@ export default {
         })
         .catch((err) => console.log(err));
     },
+
     onNewTransaction({ form, fileForm }) {
       this.isLoadingAddTransaction = true;
-      for (let i = 0; i < 1000; i++) {
-        EventService.addNewTransaction(form)
-          .then((res) => {
-            const { data, status } = res;
-            if (data && status === 200) {
-              if (fileForm) {
-                fileForm.append(
-                  "transactionId",
-                  data.transactionId || data.notTransactionId
-                );
-                EventService.uploadPhoto(fileForm)
-                  .then((res) => {
-                    const { data, status } = res;
-                    this.$message.success("success");
-                    if (data && status === 200) this.getTableData();
-                  })
-                  .catch((err) => console.log(err.message));
-              } else {
-                this.$message.success("success");
-                this.getTableData();
-              }
-              this.isLoadingAddTransaction = false;
+      // for (let i = 0; i < 2; i++) {
+      EventService.addNewTransaction(form)
+        .then((res) => {
+          const { data, status } = res;
+          if (data && status === 200) {
+            if (fileForm) {
+              fileForm.append(
+                "transactionId",
+                data.transactionId || data.notTransactionId
+              );
+              EventService.uploadPhoto(fileForm)
+                .then((res) => {
+                  const { data, status } = res;
+                  this.$message.success("success");
+                  if (data && status === 200) this.getTableData();
+                })
+                .catch((err) => console.log(err.message));
             } else {
-              this.$message.alert("something went wrong");
+              this.$message.success("success");
+              this.getTableData();
             }
-          })
-          .catch((err) => {
-            console.log(err);
-            this.$message.error("lengkapi data");
-          });
-      }
+          } else {
+            this.$message.alert("something went wrong");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          this.$message.error("lengkapi data");
+        });
+      // }
+      this.isLoadingAddTransaction = false;
     },
     onEditTransaction({ form, transactionId }) {
       this.isLoadingEditTransaction = true;
