@@ -1,6 +1,6 @@
 {
-  "name": "app-petty-cash-2",
-  "version": "0.1.0",
+  "name": "app-petty-cash",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -38,5 +38,16 @@
     "eslint-plugin-vue": "^6.2.2",
     "vue-jest": "^3.0.7",
     "vue-template-compiler": "^2.6.11"
-  }
+  },
+  "description": "```\r npm install\r ```",
+  "main": ".eslintrc.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://gitlab.pinjamango.com:8088/roxy_developer/app-petty-cash.git"
+  },
+  "author": "",
+  "license": "ISC"
 }
