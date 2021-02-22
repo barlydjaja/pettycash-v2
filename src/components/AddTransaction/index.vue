@@ -112,10 +112,10 @@ export default {
           },
         ],
         transactionType: [
-          { required: true, message: "Jenis Transaksi", trigger: "change" },
+          { required: false, message: "Jenis Transaksi", trigger: "change" },
         ],
         transactionName: [
-          { required: true, message: "Nama Transaksi", trigger: "change" },
+          { required: false, message: "Nama Transaksi", trigger: "change" },
         ],
         amount: [{ required: true, message: "Jumlah Uang", trigger: "blur" }],
       },
