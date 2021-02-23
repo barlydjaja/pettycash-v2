@@ -6,6 +6,7 @@ export default {
       EventSerivce.loggedIn()
         .then(() => next())
         .catch(() => {
+          sessionStorage.setItem("redirectPath", to.path);
           next({ name: "Login" });
         });
     } else {

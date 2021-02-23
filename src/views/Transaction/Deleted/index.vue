@@ -71,7 +71,7 @@
           sortable
           prop="transactionDate"
           :label="'Tanggal'"
-          min-width="100"
+          min-width="120"
         >
           <template slot-scope="scope">
             {{ scope.row.transactionDate.toString().split(" ")[0] }}
@@ -82,25 +82,31 @@
           sortable
           prop="user.username"
           :label="'Nama'"
-          min-width="150"
+          min-width="120"
+        ></el-table-column>
+        <el-table-column
+          sortable
+          prop="user.branch.branchName"
+          :label="'cabang'"
+          min-width="120"
         ></el-table-column>
         <el-table-column
           sortable
           prop="transactionType.transactionTypeName"
           :label="'Transaksi'"
-          min-width="150"
+          min-width="120"
         ></el-table-column>
         <el-table-column
           sortable
           prop="description"
           :label="'Deskripsi'"
-          min-width="150"
+          min-width="120"
         ></el-table-column>
         <el-table-column
           sortable
           prop="amount"
           :label="'Jumlah Transaksi'"
-          min-width="150"
+          min-width="120"
         >
           <template slot-scope="scope">
             <span
@@ -112,11 +118,10 @@
             </span>
           </template></el-table-column
         >
-        <el-table-column prop="fileName" :label="'receipt'" min-width="200">
+        <el-table-column prop="fileName" :label="'receipt'" min-width="120">
           <template slot-scope="scope">
             <el-button
               size="mini"
-              style="margin-left: 10px"
               @click="handleReject(scope.row.transactionId)"
             >
               <i class="el-icon-close"></i>

@@ -111,7 +111,11 @@ export default {
               storage.set("user", user);
               storage.set("token", token);
               resolve();
-              this.$router.push({ name: "TransactionHistory" });
+              this.$router.push(
+                sessionStorage.getItem("redirectPath") || {
+                  name: "TransactionHistory",
+                }
+              );
               this.$message.success("Login Success");
             } else {
               reject();

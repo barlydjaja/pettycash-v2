@@ -71,7 +71,7 @@
           sortable
           prop="transactionDate"
           :label="'Tanggal'"
-          min-width="100"
+          min-width="120"
         >
           <template slot-scope="scope">
             {{ scope.row.transactionDate.toString().split(" ")[0] }}
@@ -87,7 +87,7 @@
           sortable
           prop="user.branch.branchName"
           :label="'Cabang'"
-          min-width="100"
+          min-width="120"
         ></el-table-column>
         <el-table-column
           sortable
@@ -99,13 +99,13 @@
           sortable
           prop="description"
           :label="'Deskripsi'"
-          min-width="150"
+          min-width="120"
         ></el-table-column>
         <el-table-column
           sortable
           prop="amount"
           :label="'Jumlah Transaksi'"
-          min-width="150"
+          min-width="120"
         >
           <template slot-scope="scope">
             <span
@@ -118,7 +118,7 @@
           </template></el-table-column
         >
 
-        <el-table-column prop="fileName" :label="'receipt'" min-width="240">
+        <el-table-column prop="fileName" :label="'receipt'" width="240">
           <template slot-scope="scope">
             <EditTransaction
               v-bind:notTransactionId="scope.row.notTransactionId"

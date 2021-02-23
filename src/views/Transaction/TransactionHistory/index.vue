@@ -94,7 +94,7 @@
           sortable
           prop="transactionDate"
           :label="'Tanggal'"
-          min-width="100"
+          min-width="120"
         >
           <template slot-scope="scope">
             <!-- {{ scope.row.transactionDate.toString() }} -->
@@ -106,25 +106,25 @@
           sortable
           prop="user.username"
           :label="'Nama'"
-          min-width="150"
+          min-width="120"
         ></el-table-column>
         <el-table-column
           sortable
           prop="transactionType.transactionTypeName"
           :label="'Transaksi'"
-          min-width="150"
+          min-width="120"
         ></el-table-column>
         <el-table-column
           sortable
           prop="description"
           :label="'Deskripsi'"
-          min-width="150"
+          min-width="120"
         ></el-table-column>
         <el-table-column
           sortable
           prop="amount"
           :label="'Jumlah Transaksi'"
-          min-width="150"
+          min-width="120"
         >
           <template slot-scope="scope">
             <span
@@ -140,7 +140,7 @@
           sortable
           prop="residue"
           :label="'Mutasi'"
-          min-width="150"
+          min-width="120"
           v-if="
             this.user.role.roleName === 'admin' ||
             this.user.role.roleName === 'riliser'
@@ -150,7 +150,7 @@
             Rp {{ autoDot(scope.row.residue) }}
           </template>
         </el-table-column>
-        <el-table-column prop="fileName" :label="'receipt'" min-width="200">
+        <el-table-column prop="fileName" :label="'receipt'" width="180px">
           <template slot-scope="scope">
             <EditTransaction
               :pendingUpdate="scope.row.pendingUpdate"
