@@ -59,6 +59,12 @@ export default {
   updateUserInfo(userId, body) {
     return apiClient().post(api.updateUserInfo(userId), body);
   },
+  createNewUser(userId, body) {
+    return apiClient().post(api.register(userId), body);
+  },
+  updateRole(body) {
+    return apiClient().post(api.updateRole, body);
+  },
 
   // all get
   getNotApprovedTransactions(userId) {
@@ -96,6 +102,12 @@ export default {
   },
   rejectDelete(transactionId) {
     return apiClient().get(api.rejectDelete(transactionId));
+  },
+  getAllUsers(userId) {
+    return apiClient().get(api.allUsers(userId));
+  },
+  getAllRole() {
+    return apiClient().get(api.allRole);
   },
 
   // Authentication

@@ -62,8 +62,17 @@ export default {
   },
   deleteExcel: `${version}/export/delete-temp`,
 
-  // for update user info
+  // for profile
   updateUserInfo(userId) {
     return `${version}/profile/update?userId=${userId}`;
   },
+  allUsers(userId) {
+    return `${version}/profile/all-users?userId=${userId}`;
+  },
+  allRole: `${version}/profile/all-role`,
+  register(userId) {
+    return `${version}/profile/register?userId=${userId}`;
+  },
+  //FIXME: BELUM KEPAKAI
+  updateRole: `${version}/profile/update-role`,
 };

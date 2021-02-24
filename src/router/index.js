@@ -5,6 +5,7 @@ import transactionRouter from "./Transaction";
 import userInfoRouter from "./UserInfo";
 import notFoundRouter from "./NotFound";
 import hooks from "./hooks";
+import userListRouter from "./UsersList";
 
 Vue.use(VueRouter);
 
@@ -15,6 +16,7 @@ const router = new VueRouter({
     ...transactionRouter,
     ...userInfoRouter,
     ...notFoundRouter,
+    ...userListRouter,
   ],
 });
 
