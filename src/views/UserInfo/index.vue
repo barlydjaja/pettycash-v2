@@ -287,10 +287,6 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/assets/scss/function";
-
-.txt_red {
-  color: #f00;
-}
 .page_menu_wrap {
   overflow: auto;
 }
