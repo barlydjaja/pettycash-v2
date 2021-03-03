@@ -36,6 +36,16 @@
             :class="{ active: false }"
             >Profil User</router-link
           >
+          <ul class="submenu">
+            <li>
+              <router-link
+                :to="{ name: 'UsersList' }"
+                class="menu_icon menu_icon_user"
+                :class="{ active: false }"
+                >Users List
+              </router-link>
+            </li>
+          </ul>
         </li>
         <li v-if="user.userId === 1">
           <!-- FIXME: bind class active diubah dinamis -->
