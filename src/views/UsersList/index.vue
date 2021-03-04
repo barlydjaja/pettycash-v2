@@ -210,7 +210,7 @@ export default {
     },
     getTableData() {
       EventService.getAllUsers(this.user.userId).then((res) => {
-        // console.log(res);
+        console.log(res);
         this.tableData = res.data;
       });
     },

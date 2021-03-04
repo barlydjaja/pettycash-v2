@@ -1,9 +1,9 @@
 export default [
   {
-    path: "",
+    path: "transaction-history",
     name: "TransactionHistory",
     component: (resolve) =>
-      require(["@/views/Transaction/TransactionHistory"], resolve),
+      require(["@/views/PettyCash/TransactionHistory"], resolve),
     meta: {
       title: "Sejarah Transaksi",
     },

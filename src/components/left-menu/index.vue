@@ -27,76 +27,61 @@
 
     <!-- Menu Start -->
     <div class="menu_panel">
-      <ul class="menu">
-        <li>
-          <!-- FIXME: bind class active diubah dinamis -->
-          <router-link
-            :to="{ name: 'UserInfo' }"
-            class="menu_icon menu_icon_user"
-            :class="{ active: false }"
-            >Profil User</router-link
+      <el-menu
+        :default-active="currentActive"
+        background-color="#3a4954"
+        text-color="#fff"
+        active-text-color="#64cd9d"
+      >
+        <el-submenu index="1">
+          <template slot="title">
+            <i class="el-icon-user-solid"></i>
+            <span>Profile</span>
+          </template>
+          <el-menu-item index="1-1" @click="goTo('UserInfo', '1-1')"
+            >Profil User</el-menu-item
           >
-          <ul class="submenu">
-            <li>
-              <router-link
-                :to="{ name: 'UsersList' }"
-                class="menu_icon menu_icon_user"
-                :class="{ active: false }"
-                >Users List
-              </router-link>
-            </li>
-          </ul>
-        </li>
-        <li v-if="user.userId === 1">
-          <!-- FIXME: bind class active diubah dinamis -->
-          <router-link
-            :to="{ name: 'UsersList' }"
-            class="menu_icon menu_icon_user"
-            :class="{ active: false }"
-            >Users List
-          </router-link>
-        </li>
-        <li>
-          <!-- FIXME: bind class active diubah dinamis -->
-          <router-link
-            :to="{ name: 'TransactionHistory' }"
-            class="menu_icon menu_other"
-            :class="{ active: false }"
+          <el-menu-item index="1-2" @click="goTo('UsersList', '1-2')"
+            >Users List</el-menu-item
           >
-            Transaksi
-          </router-link>
-        </li>
-        <li>
-          <!-- FIXME: bind class active diubah dinamis -->
-          <router-link
-            :to="{ name: 'Approval' }"
-            class="menu_icon menu_other"
-            :class="{ active: false }"
+        </el-submenu>
+        <el-submenu index="2">
+          <template slot="title">
+            <i class="el-icon-money"></i>
+            <span>PettyCash</span>
+          </template>
+          <el-menu-item index="2-1" @click="goTo('TransactionHistory', '2-1')"
+            >Transaction</el-menu-item
           >
-            Approval
-          </router-link>
-        </li>
-        <li>
-          <!-- FIXME: bind class active diubah dinamis -->
-          <router-link
-            :to="{ name: 'Edited' }"
-            class="menu_icon menu_other"
-            :class="{ active: false }"
+          <el-menu-item index="2-2" @click="goTo('Approval', '2-2')"
+            >Approval</el-menu-item
           >
-            Edited
-          </router-link>
-        </li>
-        <li>
-          <!-- FIXME: bind class active diubah dinamis -->
-          <router-link
-            :to="{ name: 'Deleted' }"
-            class="menu_icon menu_other"
-            :class="{ active: false }"
+          <el-menu-item index="2-3" @click="goTo('Edited', '2-3')"
+            >Edited</el-menu-item
           >
-            Deleted
-          </router-link>
-        </li>
-      </ul>
+          <el-menu-item index="2-4" @click="goTo('Deleted', '2-4')"
+            >Deleted</el-menu-item
+          >
+        </el-submenu>
+        <el-submenu index="3">
+          <template slot="title">
+            <i class="el-icon-s-home"></i>
+            <span>Inventory</span>
+          </template>
+          <el-menu-item index="3-1" @click="goTo('TransactionHistory', '3-1')"
+            >Transaction</el-menu-item
+          >
+          <el-menu-item index="3-2" @click="goTo('Approval', '3-2')"
+            >Approval</el-menu-item
+          >
+          <el-menu-item index="3-3" @click="goTo('Edited', '3-3')"
+            >Edited</el-menu-item
+          >
+          <el-menu-item index="3-4" @click="goTo('Deleted', '3-4')"
+            >Deleted</el-menu-item
+          >
+        </el-submenu>
+      </el-menu>
     </div>
   </aside>
 </template>
@@ -111,7 +96,17 @@ export default {
       user: storage.get("user"),
     };
   },
+  computed: {
+    currentActive() {
+      return this.$store.state.menu.leftMenuActiveIndex;
+    },
+  },
   methods: {
+    goTo(menu, activeIndex) {
+      this.$store.state.menu.leftMenuActiveIndex = activeIndex;
+      // console.log(this.$route.path);
+      this.$router.push({ name: menu });
+    },
     lockMenu() {
       this.isLock = !this.isLock;
       this.$store.state.menu.isLock = this.isLock;

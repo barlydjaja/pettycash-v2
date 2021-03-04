@@ -18,62 +18,62 @@
         }"
       >
         <h1 class="text-center my-3">User Info</h1>
-        <b-container>
-          <el-form
-            ref="form"
-            :model="form"
-            :rules="rules"
-            label-width="120px"
-            style="min-width: 40%; padding-right: 20px"
-            class="text-center mx-auto"
-          >
-            <el-form-item label="Username">
-              <el-input v-model="form.name"></el-input>
-            </el-form-item>
-            <el-form-item label="Email">
-              <el-input v-model="form.email"></el-input>
-            </el-form-item>
-            <el-form-item label="Branch">
-              <el-select
-                v-model="form.branchName"
-                style="width: 100%"
-                :disabled="userData.role.roleName !== 'admin'"
-              >
-                <el-option label="Jakarta" value="JAKARTA"></el-option>
-                <el-option label="Semarang" value="SEMARANG"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="Password" prop="oldPassword">
-              <el-input v-model="form.oldPassword" type="password"></el-input>
-            </el-form-item>
-            <el-form-item label="Department">
-              <el-input v-model="form.department" disabled></el-input>
-            </el-form-item>
-            <el-form-item label="Role">
-              <el-input v-model="form.role" disabled></el-input>
-            </el-form-item>
-            <el-form-item
-              label="Saldo Cabang"
-              v-show="
-                this.userData.role.roleName === 'admin' ||
-                this.userData.role.roleName === 'riliser'
-              "
+        <!-- <b-container> -->
+        <el-form
+          ref="form"
+          :model="form"
+          :rules="rules"
+          label-width="120px"
+          style="min-width: 40%; padding-right: 20px"
+          class="text-center mx-auto"
+        >
+          <el-form-item label="Username">
+            <el-input v-model="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="Email">
+            <el-input v-model="form.email"></el-input>
+          </el-form-item>
+          <el-form-item label="Branch">
+            <el-select
+              v-model="form.branchName"
+              style="width: 100%"
+              :disabled="userData.role.roleName !== 'admin'"
             >
-              <el-input v-model="balance" disabled></el-input>
-            </el-form-item>
-            <el-form-item style="float: right" class="mr-5 mt-2">
-              <el-button @click="handleUpdateProfile('form')"
-                >Update Profile</el-button
-              >
-            </el-form-item>
-          </el-form>
-          <el-button
-            type="text"
-            @click="dialogChangePassword = true"
-            style="margin-left: 120px"
-            >Change Password</el-button
+              <el-option label="Jakarta" value="JAKARTA"></el-option>
+              <el-option label="Semarang" value="SEMARANG"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Password" prop="oldPassword">
+            <el-input v-model="form.oldPassword" type="password"></el-input>
+          </el-form-item>
+          <el-form-item label="Department">
+            <el-input v-model="form.department" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="Role">
+            <el-input v-model="form.role" disabled></el-input>
+          </el-form-item>
+          <el-form-item
+            label="Saldo Cabang"
+            v-show="
+              this.userData.role.roleName === 'admin' ||
+              this.userData.role.roleName === 'riliser'
+            "
           >
-        </b-container>
+            <el-input v-model="balance" disabled></el-input>
+          </el-form-item>
+          <el-form-item style="float: right" class="mr-5 mt-2">
+            <el-button @click="handleUpdateProfile('form')"
+              >Update Profile</el-button
+            >
+          </el-form-item>
+        </el-form>
+        <el-button
+          type="text"
+          @click="dialogChangePassword = true"
+          style="margin-left: 120px"
+          >Change Password</el-button
+        >
+        <!-- </b-container> -->
         <el-dialog title="Change Password" :visible.sync="dialogChangePassword">
           <el-form
             :model="ruleForm"

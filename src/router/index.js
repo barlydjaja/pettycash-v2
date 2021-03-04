@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import loginRouter from "./Login";
-import transactionRouter from "./Transaction";
+import pettyCashRouter from "./PettyCash";
 import userInfoRouter from "./UserInfo";
 import notFoundRouter from "./NotFound";
 import hooks from "./hooks";
@@ -13,7 +13,7 @@ const router = new VueRouter({
   mode: "history",
   routes: [
     ...loginRouter,
-    ...transactionRouter,
+    ...pettyCashRouter,
     ...userInfoRouter,
     ...notFoundRouter,
     ...userListRouter,
