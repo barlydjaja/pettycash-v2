@@ -203,14 +203,14 @@ export default {
 
       //   console.log(form);
       EventService.updateRole(form).then((res) => {
-        console.log(res);
-        this.$message.success("Role Changed");
+        // console.log(res);
+        if (res.status === 200) this.$message.success("Role Changed");
         this.getTableData();
       });
     },
     getTableData() {
       EventService.getAllUsers(this.user.userId).then((res) => {
-        console.log(res);
+        // console.log(res);
         this.tableData = res.data;
       });
     },

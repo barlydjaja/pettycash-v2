@@ -20,7 +20,7 @@
     </div>
 
     <!-- input logo  -->
-    <div class="system_logo_name">
+    <div class="system_logo_name" @click="$router.push('/home')">
       <div class="system_logo"></div>
       <div class="system_name">Sistem Pengelolaan Petty Cash PinjamanGO</div>
     </div>
@@ -41,7 +41,10 @@
           <el-menu-item index="1-1" @click="goTo('UserInfo', '1-1')"
             >Profil User</el-menu-item
           >
-          <el-menu-item index="1-2" @click="goTo('UsersList', '1-2')"
+          <el-menu-item
+            index="1-2"
+            @click="goTo('UsersList', '1-2')"
+            v-if="user.role.roleName === 'admin'"
             >Users List</el-menu-item
           >
         </el-submenu>
@@ -104,8 +107,7 @@ export default {
   methods: {
     goTo(menu, activeIndex) {
       this.$store.state.menu.leftMenuActiveIndex = activeIndex;
-      // console.log(this.$route.path);
-      this.$router.push({ name: menu });
+      if (this.$route.name !== menu) this.$router.push({ name: menu });
     },
     lockMenu() {
       this.isLock = !this.isLock;
