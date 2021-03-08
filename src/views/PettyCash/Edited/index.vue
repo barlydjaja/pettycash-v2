@@ -175,9 +175,9 @@
 import EventService from "@/services/EventService";
 import storage from "@/libs/storage";
 import FileSaver from "file-saver";
-import EditTransaction from "@/components/EditTransaction";
-import UploadPhoto from "@/components/UploadPhoto";
-import DownloadPhoto from "@/components/DownloadPhoto";
+import EditTransaction from "@/components/PettyCash/EditTransaction";
+import UploadPhoto from "@/components/PettyCash/UploadPhoto";
+import DownloadPhoto from "@/components/PettyCash/DownloadPhoto";
 
 export default {
   name: "TransactionHistory",
@@ -189,6 +189,7 @@ export default {
   },
   data() {
     return {
+      tableMaxHeight:String,
       form: {
         branchName: storage.get("user").branch.branchName,
         month: Number,

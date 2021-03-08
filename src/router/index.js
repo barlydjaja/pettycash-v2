@@ -5,6 +5,7 @@ import loginRouter from "./Login";
 import pettyCashRouter from "./PettyCash";
 import userInfoRouter from "./UserInfo";
 import notFoundRouter from "./NotFound";
+import inventoryRouter from "./Inventory";
 import hooks from "./hooks";
 import userListRouter from "./UsersList";
 
@@ -16,6 +17,7 @@ const router = new VueRouter({
     ...homeRouter,
     ...loginRouter,
     ...pettyCashRouter,
+    ...inventoryRouter,
     ...userInfoRouter,
     ...notFoundRouter,
     ...userListRouter,

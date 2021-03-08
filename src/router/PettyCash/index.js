@@ -1,5 +1,5 @@
 import HomeRoute from "./children/Home";
-import TransactionHistory from "./children/TransactionHistory";
+import TransactionHistoryRoute from "./children/TransactionHistory";
 import approvalRoute from "./children/Approval";
 import deleteRoute from "./children/Deleted";
 import editRoute from "./children/Edited";
@@ -10,7 +10,7 @@ export default [
     component: (resolve) => require(["@/views/PettyCash"], resolve),
     children: [
       ...HomeRoute,
-      ...TransactionHistory,
+      ...TransactionHistoryRoute,
       ...approvalRoute,
       ...deleteRoute,
       ...editRoute,

@@ -4,14 +4,12 @@
       <NavBar v-if="isShowNav" />
     </div>
     <!-- </div> -->
-    <!-- <router-link :to="{ name: 'TransactionHistory' }">sejarah sini</router-link> -->
     <router-view v-if="isRouterAlive" />
   </div>
 </template>
 
 <script>
 import NavBar from "@/components/nav-bar";
-// import LeftMenu from "@/components/left-menu";
 
 export default {
   name: "App",
@@ -32,8 +30,8 @@ export default {
 };
 </script>
 <style lang="scss">
-@import "@/assets/scss/function";
-@import "@/assets/scss/partials/reset";
+@import "src/assets/scss/function";
+@import "src/assets/scss/partials/reset";
 
 * {
   margin: 0;

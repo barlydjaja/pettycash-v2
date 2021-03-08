@@ -71,17 +71,11 @@
             <i class="el-icon-s-home"></i>
             <span>Inventory</span>
           </template>
-          <el-menu-item index="3-1" @click="goTo('TransactionHistory', '3-1')"
-            >Transaction</el-menu-item
+          <el-menu-item index="3-1" @click="goTo('InventoryList', '3-1')"
+            >Inventory List</el-menu-item
           >
-          <el-menu-item index="3-2" @click="goTo('Approval', '3-2')"
-            >Approval</el-menu-item
-          >
-          <el-menu-item index="3-3" @click="goTo('Edited', '3-3')"
-            >Edited</el-menu-item
-          >
-          <el-menu-item index="3-4" @click="goTo('Deleted', '3-4')"
-            >Deleted</el-menu-item
+          <el-menu-item index="3-2" @click="goTo('ItemMutation', '3-2')"
+            >Item Mutation</el-menu-item
           >
         </el-submenu>
       </el-menu>

@@ -174,10 +174,10 @@
 import EventService from "@/services/EventService";
 import storage from "@/libs/storage";
 import FileSaver from "file-saver";
-import AddTransactions from "@/components/AddTransaction";
-import EditTransaction from "@/components/EditTransaction";
-import UploadPhoto from "@/components/UploadPhoto";
-import DownloadPhoto from "@/components/DownloadPhoto";
+import AddTransactions from "@/components/PettyCash/AddTransaction";
+import EditTransaction from "@/components/PettyCash/EditTransaction";
+import UploadPhoto from "@/components/PettyCash/UploadPhoto";
+import DownloadPhoto from "@/components/PettyCash/DownloadPhoto";
 const user = storage.get("user");
 
 export default {
