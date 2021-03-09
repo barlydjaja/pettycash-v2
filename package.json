@@ -2,13 +2,17 @@
   "name": "app-petty-cash",
   "version": "1.0.1",
   "private": true,
+  "description": "```\r npm install\r ```",
+  "author": "",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
+    "test": "jest",
     "lint": "vue-cli-service lint",
     "dev": "vue-cli-service serve --mode development"
   },
+  "main": ".eslintrc.js",
   "dependencies": {
     "axios": "^0.21.1",
     "bootstrap": "^4.6.0",
@@ -17,6 +21,7 @@
     "element-ui": "^2.15.0",
     "file-saver": "^2.0.5",
     "jw-vue-pagination": "^1.0.3",
+    "lodash": "^4.17.21",
     "node-sass": "^5.0.0",
     "sass-loader": "^10.1.1",
     "vue": "^2.6.12",
@@ -39,15 +44,12 @@
     "vue-jest": "^3.0.7",
     "vue-template-compiler": "^2.6.11"
   },
-  "description": "```\r npm install\r ```",
-  "main": ".eslintrc.js",
   "directories": {
     "test": "tests"
   },
+  "license": "ISC",
   "repository": {
     "type": "git",
     "url": "http://gitlab.pinjamango.com:8088/roxy_developer/app-petty-cash.git"
-  },
-  "author": "",
-  "license": "ISC"
+  }
 }

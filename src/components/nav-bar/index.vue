@@ -1,10 +1,11 @@
+<!--suppress ALL -->
 <template>
   <section class="navbar">
     <!-- <p>hello world</p> -->
     <div
       :class="{
         'navbar-left': true,
-        'navbar-left-padding': $store.state.menu.isLock, // nanti diganti ke store
+        'navbar-left-padding': $store.state.menu.isLock,
       }"
     >
       <!-- menu button -->

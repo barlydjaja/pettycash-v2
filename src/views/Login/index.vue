@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import EventService from "@/services/EventService";
+import EventService from "@/services/PettyCashService";
 import storage from "@/libs/storage";
 export default {
   name: "Login",

@@ -1,4 +1,4 @@
-import EventSerivce from "@/services/EventService";
+import EventSerivce from "@/services/PettyCashService";
 
 export default {
   auth(to, from, next) {

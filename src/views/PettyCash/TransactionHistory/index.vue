@@ -205,7 +205,7 @@
 </template>
 
 <script>
-import EventService from "@/services/EventService";
+import EventService from "@/services/PettyCashService";
 import storage from "@/libs/storage";
 // import axios from "axios";
 import FileSaver from "file-saver";
@@ -217,7 +217,7 @@ import DownloadPhoto from "@/components/PettyCash/DownloadPhoto";
 // const user = storage.get("user");
 
 export default {
-  name: "TransactionHistory",
+  name: "PettyCashTransactionHistory",
   components: {
     AddTransactions,
     EditTransaction,

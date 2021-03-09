@@ -17,8 +17,8 @@ const mutations = {
 };
 
 const actions = {
-  setShowAction(val) {
-    state.show = val;
+  setShowAction(context,show) {
+    context.commit("toggleMenuShow",show)
   },
 };
 

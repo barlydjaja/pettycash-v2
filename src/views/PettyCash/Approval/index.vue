@@ -171,7 +171,7 @@
 </template>
 
 <script>
-import EventService from "@/services/EventService";
+import EventService from "@/services/PettyCashService";
 import storage from "@/libs/storage";
 import FileSaver from "file-saver";
 import AddTransactions from "@/components/PettyCash/AddTransaction";
@@ -181,7 +181,7 @@ import DownloadPhoto from "@/components/PettyCash/DownloadPhoto";
 const user = storage.get("user");
 
 export default {
-  name: "TransactionHistory",
+  name: "PettyCashApproval",
   components: {
     AddTransactions,
     EditTransaction,

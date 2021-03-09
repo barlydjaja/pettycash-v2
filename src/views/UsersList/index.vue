@@ -149,7 +149,7 @@
 
 <script>
 import storage from "@/libs/storage";
-import EventService from "@/services/EventService";
+import EventService from "@/services/PettyCashService";
 import LeftMenu from "@/components/left-menu";
 
 export default {

@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import EventService from "@/services/EventService";
+import EventService from "@/services/PettyCashService";
 export default {
   name: "DeleteTransaction",
   props: {

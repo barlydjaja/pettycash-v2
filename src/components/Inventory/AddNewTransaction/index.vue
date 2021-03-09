@@ -7,7 +7,7 @@
       <p>disini bakal ada form yg disi untuk item keluar/masuk</p>
       <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">Cancel</el-button>
-    <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
+    <el-button type="primary" @click ="dialogVisible = false">Confirm</el-button>
   </span>
     </el-dialog>
   </div>

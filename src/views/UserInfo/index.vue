@@ -123,7 +123,7 @@
 </template>
 
 <script>
-import EventService from "@/services/EventService";
+import EventService from "@/services/PettyCashService";
 import LeftMenu from "@/components/left-menu";
 import storage from "@/libs/storage";
 // const user = storage.get("user");

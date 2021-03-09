@@ -25,7 +25,7 @@
 import LeftMenu from "@/components/left-menu";
 
 export default {
-  name: "Transaction",
+  name: "PettyCash",
   components: {
     LeftMenu,
   },

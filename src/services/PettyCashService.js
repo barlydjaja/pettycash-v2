@@ -1,6 +1,6 @@
 import api from "@/api";
 import storage from "@/libs/storage";
-import apiClient from "@/api/ApiClient";
+import apiPettyCash from "@/api/ApiPettyCash";
 // const user = storage.get("user");
 const token = storage.get("token");
 // console.log(token);
@@ -10,19 +10,19 @@ export default {
 
   // all post
   login(body) {
-    return apiClient().post(api.login, body);
+    return apiPettyCash().post(api.login, body);
   },
   getAllTransactionsByMonthAndBranch(body) {
-    return apiClient().post(api.viewAllTransactionsByMonthAndBranch, body);
+    return apiPettyCash().post(api.viewAllTransactionsByMonthAndBranch, body);
   },
   addNewTransaction(body) {
-    return apiClient().post(api.addNewTransaction, body);
+    return apiPettyCash().post(api.addNewTransaction, body);
   },
   updateTransaction(body, transactionId) {
-    return apiClient().post(api.updateTransaction(transactionId), body);
+    return apiPettyCash().post(api.updateTransaction(transactionId), body);
   },
   updateNotApprovedTransaction(body) {
-    return apiClient().post(api.updateNotApprovedTransaction, body);
+    return apiPettyCash().post(api.updateNotApprovedTransaction, body);
   },
   uploadPhoto(body) {
     const config = {
@@ -32,7 +32,7 @@ export default {
       },
     };
     // console.log(api.uploadPhoto);
-    return apiClient().post(api.uploadPhoto, body, config);
+    return apiPettyCash().post(api.uploadPhoto, body, config);
   },
   uploadPendingPhoto(body) {
     const config = {
@@ -41,10 +41,10 @@ export default {
         "content-type": "multipart/form-data",
       },
     };
-    return apiClient().post(api.uploadPendingPhoto, body, config);
+    return apiPettyCash().post(api.uploadPendingPhoto, body, config);
   },
   editPending(body) {
-    return apiClient().post(api.editPending, body);
+    return apiPettyCash().post(api.editPending, body);
   },
   exportToExcel(userId, body) {
     const config = {
@@ -54,60 +54,60 @@ export default {
       responseType: "blob",
     };
     // console.log(userId);
-    return apiClient().post(api.exportToExcel(userId), body, config);
+    return apiPettyCash().post(api.exportToExcel(userId), body, config);
   },
   updateUserInfo(userId, body) {
-    return apiClient().post(api.updateUserInfo(userId), body);
+    return apiPettyCash().post(api.updateUserInfo(userId), body);
   },
   createNewUser(userId, body) {
-    return apiClient().post(api.register(userId), body);
+    return apiPettyCash().post(api.register(userId), body);
   },
   updateRole(body) {
-    return apiClient().post(api.updateRole, body);
+    return apiPettyCash().post(api.updateRole, body);
   },
 
   // all get
   getNotApprovedTransactions(userId) {
-    return apiClient().get(api.viewNotApprovedTransactions(userId));
+    return apiPettyCash().get(api.viewNotApprovedTransactions(userId));
   },
   getTransactionsByBranch(branch) {
-    return apiClient().get(api.viewApprovedTransactions(branch));
+    return apiPettyCash().get(api.viewApprovedTransactions(branch));
   },
   getPendingUpdate(userId) {
-    return apiClient().get(api.pendingUpdate(userId));
+    return apiPettyCash().get(api.pendingUpdate(userId));
   },
   deleteTransaction(transactionId, userId) {
-    return apiClient().get(api.deleteTransaction(transactionId, userId));
+    return apiPettyCash().get(api.deleteTransaction(transactionId, userId));
   },
   downloadPhoto(transactionId) {
-    return apiClient().get(api.downloadPhoto(transactionId));
+    return apiPettyCash().get(api.downloadPhoto(transactionId));
   },
   approve(transactionId, userId) {
-    return apiClient().get(api.approve(transactionId, userId));
+    return apiPettyCash().get(api.approve(transactionId, userId));
   },
   rejectApprove(transactionId) {
-    return apiClient().get(api.rejectApprove(transactionId));
+    return apiPettyCash().get(api.rejectApprove(transactionId));
   },
   rejectUpdate(transactionId) {
-    return apiClient().get(api.rejectUpdate(transactionId));
+    return apiPettyCash().get(api.rejectUpdate(transactionId));
   },
   approveUpdate(transactionId, userId) {
-    return apiClient().get(api.approveUpdate(transactionId, userId));
+    return apiPettyCash().get(api.approveUpdate(transactionId, userId));
   },
   pendingDelete(userId) {
-    return apiClient().get(api.pendingDelete(userId));
+    return apiPettyCash().get(api.pendingDelete(userId));
   },
   deleteExcel() {
-    return apiClient().get(api.deleteExcel);
+    return apiPettyCash().get(api.deleteExcel);
   },
   rejectDelete(transactionId) {
-    return apiClient().get(api.rejectDelete(transactionId));
+    return apiPettyCash().get(api.rejectDelete(transactionId));
   },
   getAllUsers(userId) {
-    return apiClient().get(api.allUsers(userId));
+    return apiPettyCash().get(api.allUsers(userId));
   },
   getAllRole() {
-    return apiClient().get(api.allRole);
+    return apiPettyCash().get(api.allRole);
   },
 
   // Authentication
