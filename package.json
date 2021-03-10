@@ -20,6 +20,7 @@
     "core-js": "^3.6.5",
     "element-ui": "^2.15.0",
     "file-saver": "^2.0.5",
+    "flush-promises": "^1.0.2",
     "jw-vue-pagination": "^1.0.3",
     "lodash": "^4.17.21",
     "node-sass": "^5.0.0",

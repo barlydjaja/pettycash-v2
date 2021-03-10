@@ -7,7 +7,7 @@ import editRoute from "./children/Edited";
 export default [
   {
     path: "/pettycash",
-    component: (resolve) => require(["@/views/PettyCash"], resolve),
+    component: () => import ("@/views/PettyCash"),
     children: [
       ...HomeRoute,
       ...TransactionHistoryRoute,

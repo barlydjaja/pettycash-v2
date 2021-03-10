@@ -2,7 +2,7 @@
   <a
     v-auth-href="{ token: token }"
     v-bind:href="
-      'http://10.69.72.99:8081/pettycash/v1/file/download/' + transactionId
+      'http://10.69.72.99:7001/pettycash/v1/file/download/' + transactionId
     "
     target="_blank"
   >

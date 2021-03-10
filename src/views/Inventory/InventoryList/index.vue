@@ -46,7 +46,7 @@
         <el-table-column label="No.Invoice" prop="date" sortable></el-table-column>
         <el-table-column label="Branch" prop="state" sortable></el-table-column>
         <el-table-column label="Transaction" prop="city" sortable></el-table-column>
-        <el-table-column label="Amount" prop="address" sortable></el-table-column>
+        <el-table-column label="Quantity" prop="address" sortable></el-table-column>
         <el-table-column label="User" prop="zip" sortable></el-table-column>
       </el-table>
     </div>

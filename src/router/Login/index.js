@@ -4,4 +4,3 @@ export default [{
     alias: '/',
     component: resolve => require(['@/views/Login'], resolve )
   }];
-  

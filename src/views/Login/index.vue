@@ -16,10 +16,9 @@
     </div>
     <div class="login-card">
       <h2 class="login-title">Sistem Pengelolaan Petty Cash PinjamanGo</h2>
-
       <el-form
-        class="login_form"
         ref="form"
+        class="login_form"
         :model="form"
         :rules="rules"
         @submit.native.prevent="submit"

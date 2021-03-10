@@ -3,7 +3,7 @@ import axios from "axios";
 
 export default () => {
     const apiPettyCash = axios.create({
-        baseURL: `http://10.69.72.99:8081/pettycash/`,
+        baseURL: `http://10.69.72.99:7001/pettycash/`,
         timeout: 30000,
         headers: {
             "content-type": "application/json",

@@ -1,16 +1,13 @@
 import api from "@/api";
 import storage from "@/libs/storage";
 import apiPettyCash from "@/api/ApiPettyCash";
-// const user = storage.get("user");
+import apiLogin from "@/api/ApiLogin"
 const token = storage.get("token");
-// console.log(token);
 
 export default {
-  //axios Authorization token
-
   // all post
   login(body) {
-    return apiPettyCash().post(api.login, body);
+    return apiLogin().post(api.login, body);
   },
   getAllTransactionsByMonthAndBranch(body) {
     return apiPettyCash().post(api.viewAllTransactionsByMonthAndBranch, body);
@@ -31,7 +28,6 @@ export default {
         "content-type": "multipart/form-data",
       },
     };
-    // console.log(api.uploadPhoto);
     return apiPettyCash().post(api.uploadPhoto, body, config);
   },
   uploadPendingPhoto(body) {

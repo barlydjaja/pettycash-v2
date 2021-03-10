@@ -429,7 +429,7 @@ export default {
           // console.log(res);
           if (status === 200)
             this.tableData = data.reverse().filter((data) => {
-              // console.log(this.user.role.roleName);
+              // console.log(data);
               if (this.user.role.roleName === "staff")
                 return data.user.username === this.user.username;
               else if (
