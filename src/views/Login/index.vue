@@ -60,8 +60,9 @@
 </template>
 
 <script>
-import EventService from "@/services/PettyCashService";
+import LoginServices from "@/services/LoginService";
 import storage from "@/libs/storage";
+
 export default {
   name: "Login",
   data() {
@@ -101,7 +102,7 @@ export default {
     onSubmit() {
       return new Promise((resolve, reject) => {
         const body = this.form;
-        EventService.login(body)
+        LoginServices(body)
           .then((res) => {
             // console.log(res.data);
             const { status, data } = res;

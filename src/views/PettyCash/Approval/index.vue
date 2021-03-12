@@ -410,8 +410,6 @@ export default {
       });
     },
 
-    // FIXME: Tambahin update year
-    // updateYear(){}
     exportToExcel() {
       const body = this.tableData;
       EventService.exportToExcel(this.user.userId, body)

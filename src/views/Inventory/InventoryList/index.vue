@@ -7,9 +7,10 @@
           <el-col :span="16">
             <AddNewTransaction/>
             <el-form-item style="display: inline-block">
-              <el-select v-model="branchName" placeholder="pilih cabang" :disabled="this.user.role.roleName!=='admin'">
-                <el-option label="Jakarta" value="JAKARTA"></el-option>
-                <el-option label="Semarang" value="SEMARANG"></el-option>
+              <el-select v-model="branchName" placeholder="pilih cabang" :disabled="this.user.role.roleName!=='admin'"
+                         @change="sortDataOnBranchChange">
+                <el-option label="JAKARTA" value="JAKARTA"></el-option>
+                <el-option label="SEMARANG" value="SEMARANG"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -25,29 +26,39 @@
     </div>
     <div class="data_table_panel">
       <el-table
-          :data="tableData.filter(data=> data.date.toString().includes(search) ||
-           data.name.toLowerCase().includes(search) ||
-           data.state.toLowerCase().includes(search) ||
-           data.city.toLowerCase().includes(search) ||
-           data.address.toLowerCase().includes(search) ||
-           data.zip.toString().includes(search))"
-          :default-sort="{prop:'date',order:'descending'}"
+          :data="tableData.filter(
+              (data)=>
+                data.createdDate.includes(search) ||
+                data.inventoryOrder.invoiceNumber.includes(search) ||
+                data.inventoryOrder.serialNumberItem.includes(search)||
+                data.categoryItem.toLowerCase().includes(search)||
+                data.itemName.toLowerCase().includes(search)||
+                data.inventoryOrder.vendor.vendorName.toLowerCase().includes(search)||
+                data.jurnalNumber.includes(search)||
+                data.inventoryOrder.statusOrder.includes(search)||
+                data.inventoryOrder.user.includes(search))"
+          :default-sort="{prop:'date', order:'descending'}"
           highlight-current-row
       >
         <el-table-column type="expand">
           <template slot-scope="props">
-            <p>State:{{ props.row.state }}</p>
-            <p>City:{{ props.row.city }}</p>
-            <p>Address:{{ props.row.address }}</p>
-            <p>Zip Code:{{ props.row.zip }}</p>
+            <h6>Journal Number: {{ props.row.jurnalNumber }}</h6>
+            <p>Status Order: <strong>{{ props.row.inventoryOrder.statusOrder }}</strong></p>
+            <p>Vendor Address: {{ props.row.inventoryOrder.vendor.address }}</p>
+            <p>Item Description: {{ props.row.description }}</p>
           </template>
         </el-table-column>
-        <el-table-column label="Date" prop="name" sortable></el-table-column>
-        <el-table-column label="No.Invoice" prop="date" sortable></el-table-column>
-        <el-table-column label="Branch" prop="state" sortable></el-table-column>
-        <el-table-column label="Transaction" prop="city" sortable></el-table-column>
-        <el-table-column label="Quantity" prop="address" sortable></el-table-column>
-        <el-table-column label="User" prop="zip" sortable></el-table-column>
+        <el-table-column label="Date" sortable>
+          <template slot-scope="scope">
+            {{ scope.row.createdDate.split(" ")[0] }}
+          </template>
+        </el-table-column>
+        <el-table-column label="No.Invoice" prop="inventoryOrder.invoiceNumber" sortable></el-table-column>
+        <el-table-column label="No.Item" prop="serialNumberItem" sortable></el-table-column>
+        <el-table-column label="Category" prop="categoryItem" sortable></el-table-column>
+        <el-table-column label="Barang" prop="itemName" sortable></el-table-column>
+        <el-table-column label="Vendor" prop="inventoryOrder.vendor.vendorName" sortable></el-table-column>
+        <el-table-column label="User" prop="inventoryOrder.user" sortable></el-table-column>
       </el-table>
     </div>
   </div>
@@ -56,71 +67,72 @@
 <script>
 import storage from "@/libs/storage";
 import AddNewTransaction from "@/components/Inventory/AddNewTransaction"
+import InventoryService from "@/services/InventoryService";
 
 export default {
   name: "InventoryList",
-  components:{
+  components: {
     AddNewTransaction
   },
   data() {
     return {
       tableData: [
-        {
-          date: "2016-05-03",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90036",
-        },
-        {
-          date: "2016-05-02",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90035",
-        },
-        {
-          date: "2016-05-04",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90034",
-        },
-        {
-          date: "2016-05-01",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90033",
-        },
-        {
-          date: "2016-05-08",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90032",
-        },
-        {
-          date: "2016-05-06",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90031",
-        },
-        {
-          date: "2016-05-07",
-          name: "Tom",
-          state: "California",
-          city: "Los Angeles",
-          address: "No. 189, Grove St, Los Angeles",
-          zip: "CA 90030",
-        },
+        // {
+        //   date: "2016-05-03",
+        //   name: "Tom",
+        //   state: "California",
+        //   city: "Los Angeles",
+        //   address: "No. 189, Grove St, Los Angeles",
+        //   zip: "CA 90036",
+        // },
+        // {
+        //   date: "2016-05-02",
+        //   name: "Tom",
+        //   state: "California",
+        //   city: "Los Angeles",
+        //   address: "No. 189, Grove St, Los Angeles",
+        //   zip: "CA 90035",
+        // },
+        // {
+        //   date: "2016-05-04",
+        //   name: "Tom",
+        //   state: "California",
+        //   city: "Los Angeles",
+        //   address: "No. 189, Grove St, Los Angeles",
+        //   zip: "CA 90034",
+        // },
+        // {
+        //   date: "2016-05-01",
+        //   name: "Tom",
+        //   state: "California",
+        //   city: "Los Angeles",
+        //   address: "No. 189, Grove St, Los Angeles",
+        //   zip: "CA 90033",
+        // },
+        // {
+        //   date: "2016-05-08",
+        //   name: "Tom",
+        //   state: "California",
+        //   city: "Los Angeles",
+        //   address: "No. 189, Grove St, Los Angeles",
+        //   zip: "CA 90032",
+        // },
+        // {
+        //   date: "2016-05-06",
+        //   name: "Tom",
+        //   state: "California",
+        //   city: "Los Angeles",
+        //   address: "No. 189, Grove St, Los Angeles",
+        //   zip: "CA 90031",
+        // },
+        // {
+        //   date: "2016-05-07",
+        //   name: "Tom",
+        //   state: "California",
+        //   city: "Los Angeles",
+        //   address: "No. 189, Grove St, Los Angeles",
+        //   zip: "CA 90030",
+        // },
       ],
       form: {},
       search: "",
@@ -128,9 +140,22 @@ export default {
       branchName: null
     };
   },
+  methods: {
+    getAllItem() {
+      InventoryService.getAllItem().then(res => {
+        // console.log(res.data)
+        this.tableData = res.data
+      }).catch(err => console.error(err))
+    },
+
+    sortDataOnBranchChange() {
+      this.tableData.filter(data => data.inventoryOrder.from === this.branchName)
+    }
+  },
   created() {
     this.user = storage.get('user')
     this.branchName = this.user.branch.branchName
+    this.getAllItem()
   }
 };
 </script>

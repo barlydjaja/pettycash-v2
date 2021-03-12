@@ -24,6 +24,7 @@
     "jw-vue-pagination": "^1.0.3",
     "lodash": "^4.17.21",
     "node-sass": "^5.0.0",
+    "npm": "^7.6.3",
     "sass-loader": "^10.1.1",
     "vue": "^2.6.12",
     "vue-auth-href": "^1.1.1",
