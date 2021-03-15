@@ -2,6 +2,17 @@ import api from "@/api"
 import apiInventory from "@/api/ApiInventory"
 
 export default {
+    getAllCategory() {
+        return apiInventory().get(api.getAllCategory())
+    },
+    addCategory(body) {
+        return apiInventory().post(api.addCategory(), body)
+    },
+    updateCategory(body) {
+        return apiInventory().post(api.updateCategory(), body)
+    },
+
+
     getAllVendor() {
         return apiInventory().get(api.getAllVendor())
     },
@@ -21,6 +32,12 @@ export default {
     },
     updateItemData(body) {
         return apiInventory().post(api.updateItemData(), body)
+    },
+    deleteItem(body){
+        return apiInventory().post(api.deleteItem(), body)
+    },
+    deleteAllItem(body) {
+        return apiInventory().post(api.deleteAllItem(), body)
     },
 
 

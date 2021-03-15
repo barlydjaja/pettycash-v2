@@ -35,8 +35,7 @@
                 data.itemName.toLowerCase().includes(search)||
                 data.inventoryOrder.vendor.vendorName.toLowerCase().includes(search)||
                 data.jurnalNumber.includes(search)||
-                data.inventoryOrder.statusOrder.includes(search)||
-                data.inventoryOrder.user.includes(search))"
+                data.inventoryOrder.statusOrder.includes(search))"
           :default-sort="{prop:'date', order:'descending'}"
           highlight-current-row
       >
@@ -50,15 +49,21 @@
         </el-table-column>
         <el-table-column label="Date" sortable>
           <template slot-scope="scope">
-            {{ scope.row.createdDate.split(" ")[0] }}
+            {{ scope.row.inventoryOrder.invoiceDate ? scope.row.inventoryOrder.invoiceDate.split(" ")[0] : 0 }}
           </template>
         </el-table-column>
         <el-table-column label="No.Invoice" prop="inventoryOrder.invoiceNumber" sortable></el-table-column>
         <el-table-column label="No.Item" prop="serialNumberItem" sortable></el-table-column>
-        <el-table-column label="Category" prop="categoryItem" sortable></el-table-column>
+        <el-table-column label="Category" prop="category.categoryName" sortable>
+        </el-table-column>
         <el-table-column label="Barang" prop="itemName" sortable></el-table-column>
         <el-table-column label="Vendor" prop="inventoryOrder.vendor.vendorName" sortable></el-table-column>
-        <el-table-column label="User" prop="inventoryOrder.user" sortable></el-table-column>
+        <el-table-column label="Configuration">
+<!--          <template slot-scope="scope">-->
+            <el-button icon="el-icon-edit" size="mini"></el-button>
+            <el-button icon="el-icon-truck" size="mini"></el-button>
+<!--          </template>-->
+        </el-table-column>
       </el-table>
     </div>
   </div>
@@ -76,64 +81,7 @@ export default {
   },
   data() {
     return {
-      tableData: [
-        // {
-        //   date: "2016-05-03",
-        //   name: "Tom",
-        //   state: "California",
-        //   city: "Los Angeles",
-        //   address: "No. 189, Grove St, Los Angeles",
-        //   zip: "CA 90036",
-        // },
-        // {
-        //   date: "2016-05-02",
-        //   name: "Tom",
-        //   state: "California",
-        //   city: "Los Angeles",
-        //   address: "No. 189, Grove St, Los Angeles",
-        //   zip: "CA 90035",
-        // },
-        // {
-        //   date: "2016-05-04",
-        //   name: "Tom",
-        //   state: "California",
-        //   city: "Los Angeles",
-        //   address: "No. 189, Grove St, Los Angeles",
-        //   zip: "CA 90034",
-        // },
-        // {
-        //   date: "2016-05-01",
-        //   name: "Tom",
-        //   state: "California",
-        //   city: "Los Angeles",
-        //   address: "No. 189, Grove St, Los Angeles",
-        //   zip: "CA 90033",
-        // },
-        // {
-        //   date: "2016-05-08",
-        //   name: "Tom",
-        //   state: "California",
-        //   city: "Los Angeles",
-        //   address: "No. 189, Grove St, Los Angeles",
-        //   zip: "CA 90032",
-        // },
-        // {
-        //   date: "2016-05-06",
-        //   name: "Tom",
-        //   state: "California",
-        //   city: "Los Angeles",
-        //   address: "No. 189, Grove St, Los Angeles",
-        //   zip: "CA 90031",
-        // },
-        // {
-        //   date: "2016-05-07",
-        //   name: "Tom",
-        //   state: "California",
-        //   city: "Los Angeles",
-        //   address: "No. 189, Grove St, Los Angeles",
-        //   zip: "CA 90030",
-        // },
-      ],
+      tableData: [],
       form: {},
       search: "",
       user: null,
@@ -143,7 +91,7 @@ export default {
   methods: {
     getAllItem() {
       InventoryService.getAllItem().then(res => {
-        // console.log(res.data)
+        console.log(res.data)
         this.tableData = res.data
       }).catch(err => console.error(err))
     },

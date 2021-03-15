@@ -4,14 +4,32 @@
       <el-button @click="
         dialogTransactionUpdate();
         getAllVendor();
-        getAllItem();
       ">Add Inventory
       </el-button>
     </div>
-    <el-dialog title="New Inventory Order/Transaction" :visible.sync="dialogTransaction">
+    <el-dialog title="New Inventory Order/Transaction" :visible.sync="dialogTransaction" :before-close="handleCloseDialog">
       <el-form ref="form" :model="form">
-        <el-form-item label="Description">
-          <el-input type="textarea" v-model="form.description"></el-input>
+        <el-form-item label="Invoice">
+          <el-row>
+            <el-col :xl="6">
+              <el-date-picker
+                  v-model="form.invoiceDate"
+                  type="date"
+                  placeholder="Invoice Date">
+              </el-date-picker>
+            </el-col>
+            <el-col :xl="18">
+              <el-input v-model="form.invoiceNumber" placeholder="Invoice Number"></el-input>
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-form-item label="Vendor's Name">
+          <el-row>
+            <el-col>
+              <el-autocomplete v-model="vendorName" :fetch-suggestions="querySearchVendor" placeholder="Vendor"
+                               @select="setVendorId"></el-autocomplete>
+            </el-col>
+          </el-row>
         </el-form-item>
         <el-form-item label="Branch">
           <el-select v-model="form.from" placeholder="Cabang">
@@ -19,26 +37,25 @@
             <el-option label="SEMARANG" value="SEMARANG"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="Invoice Number">
-          <el-input v-model="form.invoiceNumber"></el-input>
+        <el-form-item label="Description">
+          <el-input type="textarea" v-model="form.description"></el-input>
         </el-form-item>
-        <el-form-item label="Item">
-          <el-autocomplete
-              v-model="itemName"
-              :fetch-suggestions="querySearchAsync"
-              placeholder="Please input"
-              @select="handleSelect"
-          ></el-autocomplete>
-          <el-button type="primary" icon="el-icon-plus" plain></el-button>
-          <div v-for="item in itemList" :key="item.itemId">{{ item }}</div>
+        <el-form-item>
+          <AddNewItem/>
+          <div class="item-list" v-for="item in createdItemList" :key="item.itemId">
+            <el-button size="mini" plain>{{ item.serialNumberItem }} -
+              {{ item.category.categoryName }} -
+              {{ item.itemName }} <i @click="onDeleteItem" class="el-icon-close"></i> <i class="el-icon-loading"></i>
+            </el-button>
+          </div>
         </el-form-item>
-        <el-card class="box-card">
+        <el-card>
           <pre>{{ form }}</pre>
         </el-card>
       </el-form>
       <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogTransactionUpdate">Cancel</el-button>
-    <el-button type="primary" @click="dialogTransactionUpdate">Confirm</el-button>
+    <el-button @click="handleCloseDialog">Cancel</el-button>
+    <el-button type="primary" @click="handleFormSubmit">Confirm</el-button>
   </span>
     </el-dialog>
   </div>
@@ -46,66 +63,104 @@
 
 <script>
 import InventoryService from "@/services/InventoryService";
+import AddNewItem from "@/components/Inventory/AddNewItem"
 
 export default {
   name: "AddNewTransactionInventory",
+  components: {
+    AddNewItem,
+  },
   data() {
     return {
+      isLoading: false,
       dialogTransaction: false,
       itemList: [],
-      itemName:"",
+      vendorList: [],
+      vendorName: "",
       form: {
-        itemId: []
+        itemId: this.$store.state.item.newItemId,
+        statusTransactionId: 1,
       },
     }
   },
-  methods: {
-    loadAll() {
-      return [
-        { "value": "vue", "link": "https://github.com/vuejs/vue" },
-        { "value": "element", "link": "https://github.com/ElemeFE/element" },
-        { "value": "cooking", "link": "https://github.com/ElemeFE/cooking" },
-        { "value": "mint-ui", "link": "https://github.com/ElemeFE/mint-ui" },
-        { "value": "vuex", "link": "https://github.com/vuejs/vuex" },
-        { "value": "vue-router", "link": "https://github.com/vuejs/vue-router" },
-        { "value": "babel", "link": "https://github.com/babel/babel" }
-      ];
+  computed: {
+    createdItemList() {
+      return this.$store.state.item.newItemCreated
     },
+  },
+  methods: {
     dialogTransactionUpdate() {
       this.dialogTransaction = !this.dialogTransaction
     },
-    getAllItem() {
-      console.log('getting item list...')
-      InventoryService.getAllItem().then(res => {
-        console.log(res)
-        for(let item of res.data){
-          this.itemList.push({value: item.itemName, itemId: item.itemId})
-        }
-        console.log(this.itemList)
-      }).catch(err => console.log(err))
-    },
     getAllVendor() {
       console.log('getting vendor list...')
-      InventoryService.getAllVendor().then(res => console.log(res)).catch(err => console.log(err))
+      InventoryService.getAllVendor().then(res => {
+        console.log(res)
+        for (let vendor of res.data) {
+          this.vendorList.push({value: vendor.vendorName, vendorId: vendor.vendorId})
+        }
+      }).catch(err => console.log(err))
     },
-    querySearchAsync(queryString, cb) {
-      let links = this.itemList;
-      let results = queryString ? links.filter(this.createFilter(queryString)) : links;
+    querySearchVendor(queryString, cb) {
+      let links = this.vendorList
+      let results = queryString ? links.filter(this.createFilterVendor(queryString)) : links
 
       cb(results)
     },
-    createFilter(queryString) {
-      return (link) => {
-        return (link.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-      };
+    createFilterVendor(queryString) {
+      return link => {
+        return (link.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
+      }
     },
-    handleSelect(item) {
-      this.form.itemId.push(item.itemId)
-    }
-  }
+
+    setVendorId(vendor) {
+      this.form.vendorId = vendor.vendorId
+    },
+    handleFormSubmit() {
+      let body = this.form
+      InventoryService.addInventoryOrder(body).then(res => {
+        console.log(res)
+      }).catch(err => console.error('something not right ', err))
+    },
+    onDeleteItem() {
+      this.isLoading = false
+      setTimeout(function () {
+        this.isLoading = false
+        console.log('ItemDeleted')
+      }, 2000)
+    },
+    handleCloseDialog(){
+      this.vendorList = []
+      this.dialogTransaction = false
+    },
+    massDelete(){
+      let body = this.$store.state.item.newItemId
+      InventoryService.deleteAllItem(body).then(res=> {
+        console.log(res)
+      }).catch(err=> console.error('error on mass delete', err))
+    },
+    handleClosePage(){
+      this.massDelete()
+    },
+  },
+created() {
+    window.addEventListener('beforeunload', this.handleClosePage)
+}
 }
 </script>
 
 <style scoped>
+
+.item-list {
+  line-height: 20px;
+}
+
+.el-date-editor.el-input {
+  width: 100%
+}
+
+.el-autocomplete {
+  display: block
+}
 
 </style>

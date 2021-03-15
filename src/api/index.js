@@ -5,6 +5,7 @@ const vendor = 'vendor'
 const item = 'item'
 const status = 'status-transaction'
 const inventoryOrder = 'inventory-order'
+const category = 'category'
 
 
 export default {
@@ -85,6 +86,19 @@ export default {
 //TODO: input inventory api
     /* INVENTORY */
 
+
+    //Category
+    getAllCategory(){
+        return `${version}/${category}/get-all-categories`
+    },
+    addCategory(){
+        return `${version}/${category}/add`
+    },
+    updateCategory(){
+        return`${version}/${category}/update`
+    },
+
+
     //vendor
     getAllVendor() {
         return `${version}/${vendor}/get-all-vendors`
@@ -108,6 +122,12 @@ export default {
     },
     updateItemData() {
         return `${version}/${item}/update`
+    },
+    deleteItem(){
+        return `${version}/${item}/delete`
+    },
+    deleteAllItem(){
+        return `${version}/${item}/mass-delete`
     },
 
 
