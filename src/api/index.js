@@ -146,5 +146,8 @@ export default {
     //ADDING NEW INVENTORY ORDER
     addInventoryOrder() {
         return `${version}/${inventoryOrder}/add`
+    },
+    getAllInventoryOrder(){
+        return `${version}/${inventoryOrder}/get-all-inventory-orders`
     }
 };

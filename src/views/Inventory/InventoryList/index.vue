@@ -9,8 +9,8 @@
             <el-form-item style="display: inline-block">
               <el-select v-model="branchName" placeholder="pilih cabang" :disabled="this.user.role.roleName!=='admin'"
                          @change="sortDataOnBranchChange">
-                <el-option label="JAKARTA" value="JAKARTA"></el-option>
-                <el-option label="SEMARANG" value="SEMARANG"></el-option>
+                <el-option label="Jakarta" value="JAKARTA"></el-option>
+                <el-option label="Semarang" value="SEMARANG"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -26,30 +26,34 @@
     </div>
     <div class="data_table_panel">
       <el-table
-          :data="tableData.filter(
+          :data="filteredtableData.filter(
               (data)=>
                 data.createdDate.includes(search) ||
                 data.inventoryOrder.invoiceNumber.includes(search) ||
-                data.inventoryOrder.serialNumberItem.includes(search)||
-                data.categoryItem.toLowerCase().includes(search)||
+                data.serialNumberItem.includes(search)||
+                data.category.categoryName.toLowerCase().includes(search)||
                 data.itemName.toLowerCase().includes(search)||
                 data.inventoryOrder.vendor.vendorName.toLowerCase().includes(search)||
-                data.jurnalNumber.includes(search)||
+                data.inventoryOrder.jurnalNumber.includes(search)||
                 data.inventoryOrder.statusOrder.includes(search))"
-          :default-sort="{prop:'date', order:'descending'}"
+          :default-sort="{prop:'invoiceDate', order:'descending'}"
           highlight-current-row
       >
         <el-table-column type="expand">
           <template slot-scope="props">
-            <h6>Journal Number: {{ props.row.jurnalNumber }}</h6>
-            <p>Status Order: <strong>{{ props.row.inventoryOrder.statusOrder }}</strong></p>
-            <p>Vendor Address: {{ props.row.inventoryOrder.vendor.address }}</p>
-            <p>Item Description: {{ props.row.description }}</p>
+            <h6>Journal Number: {{ props.row.inventoryOrder.jurnalNumber }}</h6>
+            <el-card shadow="hover">
+              <p>Input item by: {{ props.row.inventoryOrder.user.username }}</p>
+              <p>Email Address: {{ props.row.inventoryOrder.user.email }}</p>
+              <p>Item Description: {{ props.row.description }}</p>
+              <p>Vendor Address: {{ props.row.inventoryOrder.vendor.address }}</p>
+              <p>Vendor Phone: {{props.row.inventoryOrder.vendor.phoneNumber}}</p>
+            </el-card>
           </template>
         </el-table-column>
-        <el-table-column label="Date" sortable>
+        <el-table-column label="Invoice Date" prop="invoiceDate" sortable>
           <template slot-scope="scope">
-            {{ scope.row.inventoryOrder.invoiceDate ? scope.row.inventoryOrder.invoiceDate.split(" ")[0] : 0 }}
+            {{ scope.row.inventoryOrder.invoiceDate.split(" ")[0] }}
           </template>
         </el-table-column>
         <el-table-column label="No.Invoice" prop="inventoryOrder.invoiceNumber" sortable></el-table-column>
@@ -59,10 +63,10 @@
         <el-table-column label="Barang" prop="itemName" sortable></el-table-column>
         <el-table-column label="Vendor" prop="inventoryOrder.vendor.vendorName" sortable></el-table-column>
         <el-table-column label="Configuration">
-<!--          <template slot-scope="scope">-->
-            <el-button icon="el-icon-edit" size="mini"></el-button>
-            <el-button icon="el-icon-truck" size="mini"></el-button>
-<!--          </template>-->
+          <template slot-scope="props">
+            <EditItem :item-detail="props.row"/>
+            <TransferItem :itemDetail="props.row"/>
+          </template>
         </el-table-column>
       </el-table>
     </div>
@@ -73,15 +77,20 @@
 import storage from "@/libs/storage";
 import AddNewTransaction from "@/components/Inventory/AddNewTransaction"
 import InventoryService from "@/services/InventoryService";
+import TransferItem from "@/components/Inventory/TransferItem"
+import EditItem from "@/components/Inventory/EditItem"
 
 export default {
   name: "InventoryList",
   components: {
-    AddNewTransaction
+    AddNewTransaction,
+    TransferItem,
+    EditItem,
   },
   data() {
     return {
-      tableData: [],
+      allTableData: [],
+      filteredtableData: [],
       form: {},
       search: "",
       user: null,
@@ -91,13 +100,19 @@ export default {
   methods: {
     getAllItem() {
       InventoryService.getAllItem().then(res => {
-        console.log(res.data)
-        this.tableData = res.data
+        this.allTableData = res.data
+        this.filteredtableData = res.data.filter(data =>
+            (data.inventoryOrder.from === this.branchName && data.inventoryOrder.to === null) ||
+            (data.inventoryOrder.to === this.branchName))
       }).catch(err => console.error(err))
     },
 
     sortDataOnBranchChange() {
-      this.tableData.filter(data => data.inventoryOrder.from === this.branchName)
+      this.filteredtableData = this.allTableData.filter(data =>
+          (data.inventoryOrder.to === this.branchName) ||
+          (data.inventoryOrder.from === this.branchName && data.inventoryOrder.to === null)
+      )
+      console.log(this.filteredtableData)
     }
   },
   created() {

@@ -13,9 +13,7 @@
         <el-form-item label="Item Name">
           <el-input v-model="form.itemName"></el-input>
         </el-form-item>
-        <el-form-item label="Journal Number">
-          <el-input v-model="form.jurnalNumber"></el-input>
-        </el-form-item>
+
         <el-form-item label="Serial Number">
           <el-input v-model="form.serialNumberItem"></el-input>
         </el-form-item>
@@ -76,6 +74,7 @@ export default {
       console.log("submiting...")
       let body = this.form
       InventoryService.addNewItem(body).then(res => {
+        console.log(res.data)
         this.$store.commit("addNewItemCreated", res.data)
         this.$store.commit("addNewItemId", res.data.itemId)
         this.dialogVisible = false

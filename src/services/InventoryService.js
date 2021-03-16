@@ -52,8 +52,11 @@ export default {
     },
 
 
+    getAllInventoryOrder() {
+        return apiInventory().get(api.getAllInventoryOrder())
+    },
     addInventoryOrder(body) {
         return apiInventory().post(api.addInventoryOrder(), body)
-    }
+    },
 
 }

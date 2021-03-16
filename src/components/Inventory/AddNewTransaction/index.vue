@@ -7,7 +7,7 @@
       ">Add Inventory
       </el-button>
     </div>
-    <el-dialog title="New Inventory Order/Transaction" :visible.sync="dialogTransaction" :before-close="handleCloseDialog">
+    <el-dialog title="New Inventory Order/Transaction" :visible.sync="dialogTransaction">
       <el-form ref="form" :model="form">
         <el-form-item label="Invoice">
           <el-row>
@@ -23,19 +23,18 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="Vendor's Name">
-          <el-row>
-            <el-col>
-              <el-autocomplete v-model="vendorName" :fetch-suggestions="querySearchVendor" placeholder="Vendor"
-                               @select="setVendorId"></el-autocomplete>
-            </el-col>
-          </el-row>
+        <el-form-item label="Journal Number">
+          <el-input v-model="form.jurnalNumber"></el-input>
         </el-form-item>
-        <el-form-item label="Branch">
-          <el-select v-model="form.from" placeholder="Cabang">
-            <el-option label="JAKARTA" value="JAKARTA"></el-option>
-            <el-option label="SEMARANG" value="SEMARANG"></el-option>
-          </el-select>
+        <el-form-item>
+          <span>
+            Vendor's Name
+          </span>
+          <span>
+            <AddNewVendor/>
+          </span>
+          <el-autocomplete v-model="vendorName" :fetch-suggestions="querySearchVendor" placeholder="Vendor"
+                           @select="setVendorId"></el-autocomplete>
         </el-form-item>
         <el-form-item label="Description">
           <el-input type="textarea" v-model="form.description"></el-input>
@@ -64,11 +63,14 @@
 <script>
 import InventoryService from "@/services/InventoryService";
 import AddNewItem from "@/components/Inventory/AddNewItem"
+import storage from "@/libs/storage"
+import AddNewVendor from "@/components/Inventory/AddNewVendor"
 
 export default {
   name: "AddNewTransactionInventory",
   components: {
     AddNewItem,
+    AddNewVendor,
   },
   data() {
     return {
@@ -80,6 +82,8 @@ export default {
       form: {
         itemId: this.$store.state.item.newItemId,
         statusTransactionId: 1,
+        from: storage.get('user').branch.branchName,
+        userId: storage.get('user').userId
       },
     }
   },
@@ -129,23 +133,23 @@ export default {
         console.log('ItemDeleted')
       }, 2000)
     },
-    handleCloseDialog(){
+    handleCloseDialog() {
       this.vendorList = []
       this.dialogTransaction = false
     },
-    massDelete(){
+    massDelete() {
       let body = this.$store.state.item.newItemId
-      InventoryService.deleteAllItem(body).then(res=> {
+      InventoryService.deleteAllItem(body).then(res => {
         console.log(res)
-      }).catch(err=> console.error('error on mass delete', err))
+      }).catch(err => console.error('error on mass delete', err))
     },
-    handleClosePage(){
-      this.massDelete()
-    },
+    // handleClosePage() {
+    //   this.massDelete()
+    // },
   },
-created() {
-    window.addEventListener('beforeunload', this.handleClosePage)
-}
+  // created() {
+  //   window.addEventListener('beforeunload', this.handleClosePage)
+  // }
 }
 </script>
 
