@@ -1,7 +1,9 @@
 <template>
   <div style="display: inline-block; margin-right: 10px">
-    <el-button icon="el-icon-truck" @click="dialogVisible=true" size="mini">
+    <el-tooltip class="item" effect="dark" content="Transfer Mass Item" placement="top" :hide-after="2000">
+    <el-button icon="el-icon-truck" @click="dialogVisible=true; getAllItemById()" size="mini">
     </el-button>
+    </el-tooltip>
     <el-dialog title="Transfer Item To Other Branches" :visible.sync="dialogVisible">
       <p>Detail Item</p>
       <el-form ref="form" :model="form">
@@ -34,31 +36,46 @@ export default {
     itemDetail: Object,
   },
   data() {
-    const {description, inventoryOrder, itemId} = this.itemDetail
+    const {
+      description,
+      to,
+      from,
+      inventoryOrderId,
+      invoiceDate,
+      invoiceNumber,
+      jurnalNumber,
+      user,
+      vendor,
+    } = this.itemDetail
     return {
       dialogVisible: false,
       form: {
         description,
-        from: inventoryOrder.to|| inventoryOrder.from,
-        inventoryOrderId: inventoryOrder.inventoryOrderId,
-        invoiceDate: inventoryOrder.invoiceDate.split(" ").join("T"),
-        invoiceNumber: inventoryOrder.invoiceNumber,
-        itemId: [
-          itemId
-        ],
-        jurnalNumber: inventoryOrder.jurnalNumber,
+        from: to || from,
+        inventoryOrderId,
+        invoiceDate: invoiceDate.split(" ").join("T"),
+        invoiceNumber,
+        itemId: [],
+        jurnalNumber,
         statusTransactionId: 2,
         to: "",
-        userId: inventoryOrder.user.userId,
-        vendorId: inventoryOrder.vendor.vendorId
+        userId: user.userId,
+        vendorId: vendor.vendorId
       }
     }
   },
   methods: {
     handleTransferItem() {
+      console.log(this.itemDetail)
       let body = this.form
       InventoryService.addInventoryOrder(body).then(res => console.log(res)).catch(err => console.error("error when transfering data", err.response))
-    }
+    },
+    getAllItemById() {
+      let inventoryOrderId = this.itemDetail.inventoryOrderId
+      InventoryService.getAllItemById(inventoryOrderId).then(res => {
+        this.form.itemId = res.data.map(data => data.itemId)
+      })
+    },
   },
 }
 </script>

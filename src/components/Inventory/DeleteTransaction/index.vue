@@ -1,12 +1,39 @@
 <template>
-  <div>
-
+  <div style="display: inline-block; margin-right: 10px">
+    <el-tooltip class="item" effect="dark" content="Delete Transaction" placement="top" :hide-after="2000">
+      <el-button @click="dialogVisible=true" icon="el-icon-delete" size="mini"></el-button>
+    </el-tooltip>
+    <el-dialog :visible.sync="dialogVisible">
+      <span>Are you sure want to delete the following transaction?</span>
+      <span slot="footer">
+        <el-button @click="dialogVisible=false">Cancel</el-button>
+        <el-button @click="handleDelete" type="primary">Confirm</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import InventoryService from "@/services/InventoryService";
+
 export default {
-  name: "DeleteTransactionInventory"
+  name: "DeleteTransactionInventory",
+  props: {
+    inventoryOrderId: Number,
+  },
+  data() {
+    return {
+      dialogVisible: false,
+    }
+  },
+  methods: {
+    handleDelete() {
+      console.log(this.inventoryOrderId)
+      InventoryService.deleteInventoryOrder(this.inventoryOrderId)
+          .then(res => console.log(res))
+          .catch(err => console.error('error at deleting transaction', err))
+    }
+  }
 }
 </script>
 

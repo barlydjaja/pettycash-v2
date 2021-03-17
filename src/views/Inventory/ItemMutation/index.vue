@@ -8,15 +8,15 @@
             <!--            adding new mutation-->
             <AddNewMutation/>
           </el-col>
-          <el-col :span="8" >
-<!--            <el-form-item prop="search">-->
-<!--              <el-input></el-input>-->
-<!--            </el-form-item>-->
+          <el-col :span="8">
+            <!--            <el-form-item prop="search">-->
+            <!--              <el-input></el-input>-->
+            <!--            </el-form-item>-->
             <el-form-item prop="search" style="display: inline-block; margin-bottom: 0">
               <el-input placeholder="search" v-model="search" prefix-icon="el-icon-search"></el-input>
             </el-form-item>
             <!--            testing tag to check search-->
-<!--            <p>{{ search }}</p>-->
+            <!--            <p>{{ search }}</p>-->
           </el-col>
         </el-row>
       </el-form>
@@ -25,7 +25,13 @@
       <el-tabs type="border-card" style="text-align: center">
         <el-tab-pane>
           <span slot="label"><i class="el-icon-date"></i>Barang Masuk</span>
-          Route
+          <h5>Barang masuk</h5>
+          <el-table :data="tableData">
+            <el-table-column prop="InvoiceDate" label="Invoice Date"></el-table-column>
+            <el-table-column prop="InvoiceNumber" label="Invoice Number"></el-table-column>
+            <el-table-column prop="Category" label="Category"></el-table-column>
+          </el-table>
+
         </el-tab-pane>
         <el-tab-pane label="Barang Transfer">Barang Transfer</el-tab-pane>
         <el-tab-pane label="Barang Keluar">Barang Keluar</el-tab-pane>
@@ -47,7 +53,8 @@ export default {
     return {
       form: {},
       search: "",
-      user: null
+      user: null,
+      tableData:[],
     }
   },
   created() {

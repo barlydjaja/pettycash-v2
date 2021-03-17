@@ -117,6 +117,9 @@ export default {
     getAllItem() {
         return `${version}/${item}/get-all-items`
     },
+    getAllItemById(inventoryOrderId){
+        return `${version}/${item}/get-by-order-id?inventoryOrderId=${inventoryOrderId}`
+    },
     addNewItem() {
         return `${version}/${item}/add`
     },
@@ -149,5 +152,11 @@ export default {
     },
     getAllInventoryOrder(){
         return `${version}/${inventoryOrder}/get-all-inventory-orders`
+    },
+    updateInventoryOrder(){
+        return `${version}/${inventoryOrder}/update`
+    },
+    deleteInventoryOrder(inventoryOrderId){
+        return `${version}/${inventoryOrder}/delete?orderId=${inventoryOrderId}`
     }
 };

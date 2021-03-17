@@ -27,6 +27,9 @@ export default {
     getAllItem() {
         return apiInventory().get(api.getAllItem())
     },
+    getAllItemById(inventoryOrderId) {
+        return apiInventory().get(api.getAllItemById(inventoryOrderId))
+    },
     addNewItem(body) {
         return apiInventory().post(api.addNewItem(), body)
     },
@@ -58,5 +61,12 @@ export default {
     addInventoryOrder(body) {
         return apiInventory().post(api.addInventoryOrder(), body)
     },
+    // TODO: belum KEPAKAI
+    updateInventoryOrder(body){
+        return apiInventory().post(api.updateInventoryOrder(), body)
+    },
+    deleteInventoryOrder(inventoryOrderId) {
+        return apiInventory().get(api.deleteInventoryOrder(inventoryOrderId))
+    }
 
 }

@@ -26,46 +26,70 @@
     </div>
     <div class="data_table_panel">
       <el-table
-          :data="filteredtableData.filter(
-              (data)=>
-                data.createdDate.includes(search) ||
-                data.inventoryOrder.invoiceNumber.includes(search) ||
-                data.serialNumberItem.includes(search)||
-                data.category.categoryName.toLowerCase().includes(search)||
-                data.itemName.toLowerCase().includes(search)||
-                data.inventoryOrder.vendor.vendorName.toLowerCase().includes(search)||
-                data.inventoryOrder.jurnalNumber.includes(search)||
-                data.inventoryOrder.statusOrder.includes(search))"
+          ref="filteredTableData"
+          :data="filteredtableData"
           :default-sort="{prop:'invoiceDate', order:'descending'}"
+          :row-key="getRowKey"
+          :
+          @row-click="onRowClick"
           highlight-current-row
       >
-        <el-table-column type="expand">
+        <el-table-column type="expand" >
           <template slot-scope="props">
-            <h6>Journal Number: {{ props.row.inventoryOrder.jurnalNumber }}</h6>
-            <el-card shadow="hover">
-              <p>Input item by: {{ props.row.inventoryOrder.user.username }}</p>
-              <p>Email Address: {{ props.row.inventoryOrder.user.email }}</p>
-              <p>Item Description: {{ props.row.description }}</p>
-              <p>Vendor Address: {{ props.row.inventoryOrder.vendor.address }}</p>
-              <p>Vendor Phone: {{props.row.inventoryOrder.vendor.phoneNumber}}</p>
+            <el-card style="margin-bottom: 20px">
+              <el-row :gutter="30">
+                <el-col :span="8">
+                  <span><strong>Vendor:</strong> {{ props.row.vendor.vendorName }}</span>
+                </el-col>
+                <el-col :span="8">
+                  <span><strong>Alamat:</strong> {{ props.row.vendor.address }}</span>
+                </el-col>
+                <el-col :span="8">
+                  <span><strong>Phone:</strong> {{ props.row.vendor.phoneNumber }}</span>
+                </el-col>
+              </el-row>
             </el-card>
+            <el-row :gutter="20">
+              <div v-for="item in itemInfoByInvoice" :key="item.itemId">
+                <el-col
+                    :span="8"
+                    v-if="item.inventoryOrder.inventoryOrderId === props.row.inventoryOrderId"
+                >
+                  <el-card style="margin-bottom: 10px">
+                    <p>
+                      <span style="float: right"><EditItem :item-detail="item" v-on:update-item-success="handleUpdateItem"/></span>
+                      Serial Number: <strong>{{ item.serialNumberItem }}</strong>
+                    </p>
+                    <p>
+                      Category: <strong>{{item.category.categoryName}}</strong>
+                    </p>
+                    <p>
+                      Item Name: <strong>{{ item.itemName }}</strong>
+                    </p>
+                    <p>
+                      Description: {{item.description}}
+                    </p>
+                  </el-card>
+                </el-col>
+              </div>
+            </el-row>
           </template>
         </el-table-column>
         <el-table-column label="Invoice Date" prop="invoiceDate" sortable>
           <template slot-scope="scope">
-            {{ scope.row.inventoryOrder.invoiceDate.split(" ")[0] }}
+            {{ scope.row.invoiceDate.split(" ")[0] }}
           </template>
         </el-table-column>
-        <el-table-column label="No.Invoice" prop="inventoryOrder.invoiceNumber" sortable></el-table-column>
-        <el-table-column label="No.Item" prop="serialNumberItem" sortable></el-table-column>
-        <el-table-column label="Category" prop="category.categoryName" sortable>
-        </el-table-column>
-        <el-table-column label="Barang" prop="itemName" sortable></el-table-column>
-        <el-table-column label="Vendor" prop="inventoryOrder.vendor.vendorName" sortable></el-table-column>
+        <el-table-column label="No.Invoice" prop="invoiceNumber" sortable></el-table-column>
+        <el-table-column label="Journal Number" prop="jurnalNumber"></el-table-column>
+        <el-table-column label="User" prop="user.username" sortable></el-table-column>
+        <el-table-column label="Vendor" prop="vendor.vendorName" sortable></el-table-column>
+        <el-table-column label="Description" prop="description"></el-table-column>
         <el-table-column label="Configuration">
           <template slot-scope="props">
-            <EditItem :item-detail="props.row"/>
-            <TransferItem :itemDetail="props.row"/>
+            <EditTransaction :item-detail="props.row" v-on:edit-success="getAllInventoryOrder"/>
+            <TransferItem :item-detail="props.row"/>
+            <DeleteTransaction :inventory-order-id="props.row.inventoryOrderId"/>
           </template>
         </el-table-column>
       </el-table>
@@ -78,6 +102,8 @@ import storage from "@/libs/storage";
 import AddNewTransaction from "@/components/Inventory/AddNewTransaction"
 import InventoryService from "@/services/InventoryService";
 import TransferItem from "@/components/Inventory/TransferItem"
+import EditTransaction from "@/components/Inventory/EditTransaction"
+import DeleteTransaction from "@/components/Inventory/DeleteTransaction"
 import EditItem from "@/components/Inventory/EditItem"
 
 export default {
@@ -85,6 +111,8 @@ export default {
   components: {
     AddNewTransaction,
     TransferItem,
+    EditTransaction,
+    DeleteTransaction,
     EditItem,
   },
   data() {
@@ -94,33 +122,45 @@ export default {
       form: {},
       search: "",
       user: null,
-      branchName: null
+      branchName: null,
+      itemInfoByInvoice: []
     };
   },
   methods: {
-    getAllItem() {
-      InventoryService.getAllItem().then(res => {
+    handleUpdateItem(inventoryOrderId){
+      InventoryService.getAllItemById(inventoryOrderId).then(res => {
+        this.itemInfoByInvoice = res.data
+      })
+    },
+    onRowClick(data) {
+      let inventoryOrderId = data.inventoryOrderId
+      InventoryService.getAllItemById(inventoryOrderId).then(res => {
+        this.itemInfoByInvoice = res.data
+      })
+      this.$refs.filteredTableData.toggleRowExpansion(data);
+    },
+    getAllInventoryOrder() {
+      InventoryService.getAllInventoryOrder().then(res => {
         this.allTableData = res.data
         this.filteredtableData = res.data.filter(data =>
-            (data.inventoryOrder.from === this.branchName && data.inventoryOrder.to === null) ||
-            (data.inventoryOrder.to === this.branchName))
+            (data.from === this.branchName && !data.to) ||
+            (data.to === this.branchName))
       }).catch(err => console.error(err))
     },
 
     sortDataOnBranchChange() {
       this.filteredtableData = this.allTableData.filter(data =>
-          (data.inventoryOrder.to === this.branchName) ||
-          (data.inventoryOrder.from === this.branchName && data.inventoryOrder.to === null)
+          (data.to === this.branchName) ||
+          (data.from === this.branchName && !data.to)
       )
-      console.log(this.filteredtableData)
-    }
+    },
   },
   created() {
     this.user = storage.get('user')
     this.branchName = this.user.branch.branchName
-    this.getAllItem()
+    this.getAllInventoryOrder()
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
