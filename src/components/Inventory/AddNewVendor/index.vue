@@ -38,10 +38,16 @@ export default {
       form: {}
     }
   },
-  methods:{
-    onSubmit(){
+  methods: {
+    onSubmit() {
       let body = this.form
-      InventoryService.addNewVendor(body).then(res=>console.log(res))
+      InventoryService.addNewVendor(body)
+          .then(res => {
+            console.log(res)
+            this.$emit('new-vendor-added')
+          })
+          .catch(err => console.error('addNewVendor', err.response))
+      this.dialogVisible = false
     }
   },
 }

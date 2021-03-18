@@ -31,7 +31,7 @@
             Vendor's Name
           </span>
           <span>
-            <AddNewVendor/>
+            <AddNewVendor v-on:new-vendor-added="getAllVendor"/>
           </span>
           <el-autocomplete v-model="vendorName" :fetch-suggestions="querySearchVendor" placeholder="Vendor"
                            @select="setVendorId"></el-autocomplete>
@@ -44,7 +44,8 @@
           <div class="item-list" v-for="item in createdItemList" :key="item.itemId">
             <el-button size="mini" plain>{{ item.serialNumberItem }} -
               {{ item.category.categoryName }} -
-              {{ item.itemName }} <i @click="onDeleteItem" class="el-icon-close"></i> <i class="el-icon-loading"></i>
+              {{ item.itemName }} <i @click="onDeleteItem(item.itemId)" class="el-icon-close" v-show="!isLoading"></i>
+              <i class="el-icon-loading" v-show="isLoading"></i>
             </el-button>
           </div>
         </el-form-item>
@@ -76,7 +77,7 @@ export default {
     return {
       isLoading: false,
       dialogTransaction: false,
-      itemList: [],
+      createdItemList: this.$store.state.item.newItemCreated,
       vendorList: [],
       vendorName: "",
       form: {
@@ -87,11 +88,6 @@ export default {
       },
     }
   },
-  computed: {
-    createdItemList() {
-      return this.$store.state.item.newItemCreated
-    },
-  },
   methods: {
     dialogTransactionUpdate() {
       this.dialogTransaction = !this.dialogTransaction
@@ -101,7 +97,8 @@ export default {
       InventoryService.getAllVendor().then(res => {
         console.log(res)
         for (let vendor of res.data) {
-          this.vendorList.push({value: vendor.vendorName, vendorId: vendor.vendorId})
+          if (!this.vendorList.find(addedVendor => addedVendor.vendorId === vendor.vendorId))
+            this.vendorList.push({value: vendor.vendorName, vendorId: vendor.vendorId})
         }
       }).catch(err => console.log(err))
     },
@@ -116,40 +113,44 @@ export default {
         return (link.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
       }
     },
-
     setVendorId(vendor) {
       this.form.vendorId = vendor.vendorId
     },
     handleFormSubmit() {
       let body = this.form
-      InventoryService.addInventoryOrder(body).then(res => {
-        console.log(res)
-      }).catch(err => console.error('something not right ', err))
+      InventoryService.addInventoryOrder(body)
+          .then(res => {
+            console.log(res)
+            this.dialogTransaction = false
+            this.emit('new-transaction-created')
+          })
+          .catch(err => console.error('something not right ', err))
     },
-    onDeleteItem() {
+    onDeleteItem(itemId) {
+      this.isLoading = true
+      console.log(itemId)
+      InventoryService.deleteItem(itemId)
+          .then(res => {
+            console.log(res)
+            const selectedItemIndex = this.createdItemList.map(item => item.itemId).indexOf(itemId)
+            const selectedIdIndex = this.form.itemId.indexOf(itemId)
+            this.$store.commit("deleteSelectedItem", selectedItemIndex)
+            this.$store.commit("deleteSelectedId", selectedIdIndex)
+          })
+          .catch(err => console.error('onDeleteItem', err))
       this.isLoading = false
-      setTimeout(function () {
-        this.isLoading = false
-        console.log('ItemDeleted')
-      }, 2000)
     },
     handleCloseDialog() {
       this.vendorList = []
       this.dialogTransaction = false
     },
     massDelete() {
-      let body = this.$store.state.item.newItemId
+      let body = this.form.itemId
       InventoryService.deleteAllItem(body).then(res => {
         console.log(res)
-      }).catch(err => console.error('error on mass delete', err))
+      }).catch(err => console.error('error on mass delete', err.response))
     },
-    // handleClosePage() {
-    //   this.massDelete()
-    // },
   },
-  // created() {
-  //   window.addEventListener('beforeunload', this.handleClosePage)
-  // }
 }
 </script>
 

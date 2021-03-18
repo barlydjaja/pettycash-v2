@@ -1,13 +1,13 @@
 <template>
-  <div style="display:inline-block; margin-right: 10px">
+  <div class="edit-transaction">
     <el-tooltip class="item" effect="dark" content="Edit Transaction" placement="top" :hide-after="2000">
-    <el-button size="mini" icon="el-icon-edit"
-               @click="
+      <el-button size="mini" icon="el-icon-edit"
+                 @click="
                dialogVisible=true;
                getAllVendor();
                getAllItemById()"
-    >
-    </el-button>
+      >
+      </el-button>
     </el-tooltip>
     <el-dialog title="Edit Item Info" :visible.sync="dialogVisible">
       <el-form ref="form" :model="form" label-position="top">
@@ -81,7 +81,7 @@ export default {
     getAllItemById() {
       let inventoryOrderId = this.itemDetail.inventoryOrderId
       InventoryService.getAllItemById(inventoryOrderId).then(res => {
-        this.form.itemId = res.data.map(data=>data.itemId)
+        this.form.itemId = res.data.map(data => data.itemId)
       })
     },
     handleEdit() {
@@ -97,5 +97,10 @@ export default {
 </script>
 
 <style scoped>
+
+.edit-transaction {
+  display: inline-block;
+  margin-right: 10px;
+}
 
 </style>

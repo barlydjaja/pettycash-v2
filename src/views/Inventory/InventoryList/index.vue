@@ -5,7 +5,7 @@
       <el-form ref="form" :model="form" label-position="top">
         <el-row>
           <el-col :span="16">
-            <AddNewTransaction/>
+            <AddNewTransaction v-on:new-transaction-created="getAllInventoryOrder"/>
             <el-form-item style="display: inline-block">
               <el-select v-model="branchName" placeholder="pilih cabang" :disabled="this.user.role.roleName!=='admin'"
                          @change="sortDataOnBranchChange">
@@ -29,23 +29,27 @@
           ref="filteredTableData"
           :data="filteredtableData"
           :default-sort="{prop:'invoiceDate', order:'descending'}"
-          :row-key="getRowKey"
-          :
           @row-click="onRowClick"
           highlight-current-row
       >
-        <el-table-column type="expand" >
+        <el-table-column type="expand" style="z-index: 0">
           <template slot-scope="props">
             <el-card style="margin-bottom: 20px">
-              <el-row :gutter="30">
-                <el-col :span="8">
+              <el-row :gutter="20">
+                <el-col :span="6">
                   <span><strong>Vendor:</strong> {{ props.row.vendor.vendorName }}</span>
                 </el-col>
-                <el-col :span="8">
+                <el-col :span="6">
                   <span><strong>Alamat:</strong> {{ props.row.vendor.address }}</span>
                 </el-col>
-                <el-col :span="8">
+                <el-col :span="5">
                   <span><strong>Phone:</strong> {{ props.row.vendor.phoneNumber }}</span>
+                </el-col>
+                <el-col :span="6">
+                  <span><strong>Description:</strong> {{ props.row.vendor.description }}</span>
+                </el-col>
+                <el-col :span="1">
+                  <span><EditVendor :vendor-info="props.row.vendor" v-on:update-vendor-success="getAllInventoryOrder"/></span>
                 </el-col>
               </el-row>
             </el-card>
@@ -57,17 +61,18 @@
                 >
                   <el-card style="margin-bottom: 10px">
                     <p>
-                      <span style="float: right"><EditItem :item-detail="item" v-on:update-item-success="handleUpdateItem"/></span>
+                      <span class="icon-card_right"><EditItem :item-detail="item"
+                                                           v-on:update-item-success="handleUpdateItem"/></span>
                       Serial Number: <strong>{{ item.serialNumberItem }}</strong>
                     </p>
                     <p>
-                      Category: <strong>{{item.category.categoryName}}</strong>
+                      Category: <strong>{{ item.category.categoryName }}</strong>
                     </p>
                     <p>
                       Item Name: <strong>{{ item.itemName }}</strong>
                     </p>
                     <p>
-                      Description: {{item.description}}
+                      Description: {{ item.description }}
                     </p>
                   </el-card>
                 </el-col>
@@ -88,8 +93,9 @@
         <el-table-column label="Configuration">
           <template slot-scope="props">
             <EditTransaction :item-detail="props.row" v-on:edit-success="getAllInventoryOrder"/>
-            <TransferItem :item-detail="props.row"/>
-            <DeleteTransaction :inventory-order-id="props.row.inventoryOrderId"/>
+            <TransferItem :item-detail="props.row" v-on:transfer-item-success="getAllInventoryOrder"/>
+            <DeleteTransaction :inventory-order-id="props.row.inventoryOrderId" :invoice-number="props.row.invoiceNumber"
+                               v-on:delete-transaction-success="getAllInventoryOrder"/>
           </template>
         </el-table-column>
       </el-table>
@@ -105,10 +111,12 @@ import TransferItem from "@/components/Inventory/TransferItem"
 import EditTransaction from "@/components/Inventory/EditTransaction"
 import DeleteTransaction from "@/components/Inventory/DeleteTransaction"
 import EditItem from "@/components/Inventory/EditItem"
+import EditVendor from "@/components/Inventory/EditVendor";
 
 export default {
   name: "InventoryList",
   components: {
+    EditVendor,
     AddNewTransaction,
     TransferItem,
     EditTransaction,
@@ -127,20 +135,28 @@ export default {
     };
   },
   methods: {
-    handleUpdateItem(inventoryOrderId){
+    handleUpdateItem(inventoryOrderId) {
       InventoryService.getAllItemById(inventoryOrderId).then(res => {
         this.itemInfoByInvoice = res.data
       })
     },
     onRowClick(data) {
       let inventoryOrderId = data.inventoryOrderId
-      InventoryService.getAllItemById(inventoryOrderId).then(res => {
-        this.itemInfoByInvoice = res.data
-      })
+      if (!this.itemInfoByInvoice.find(currentItem => currentItem.inventoryOrder.inventoryOrderId === inventoryOrderId)) {
+        InventoryService.getAllItemById(inventoryOrderId).then(res => {
+          const items = res.data
+          for (let item of items) {
+            if (!this.itemInfoByInvoice.find(currentItem => currentItem.itemId === item.itemId))
+              this.itemInfoByInvoice.push(item)
+          }
+          console.log(this.itemInfoByInvoice)
+        })
+      }
       this.$refs.filteredTableData.toggleRowExpansion(data);
     },
     getAllInventoryOrder() {
       InventoryService.getAllInventoryOrder().then(res => {
+        console.log(res.data)
         this.allTableData = res.data
         this.filteredtableData = res.data.filter(data =>
             (data.from === this.branchName && !data.to) ||
@@ -154,7 +170,8 @@ export default {
           (data.from === this.branchName && !data.to)
       )
     },
-  },
+  }
+  ,
   created() {
     this.user = storage.get('user')
     this.branchName = this.user.branch.branchName
@@ -170,5 +187,9 @@ export default {
 
 .icon-size {
   font-size: 2em;
+}
+
+.icon-card_right{
+  float: right;
 }
 </style>
