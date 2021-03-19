@@ -26,6 +26,7 @@
     </div>
     <div class="data_table_panel">
       <el-table
+          v-loading="isLoadingTransaction"
           ref="filteredTableData"
           :data="filteredtableData"
           :default-sort="{prop:'invoiceDate', order:'descending'}"
@@ -54,15 +55,29 @@
               </el-row>
             </el-card>
             <el-row :gutter="20">
-              <div v-for="item in itemInfoByInvoice" :key="item.itemId">
+              <div v-if="isLoadingItem">
+
+              </div>
+              <div v-else></div>
+              <div v-for="(item,index) in itemInfoByInvoice" :key="index">
                 <el-col
                     :span="8"
                     v-if="item.inventoryOrder.inventoryOrderId === props.row.inventoryOrderId"
                 >
                   <el-card style="margin-bottom: 10px">
                     <p>
-                      <span class="icon-card_right"><EditItem :item-detail="item"
-                                                           v-on:update-item-success="handleUpdateItem"/></span>
+                      <span class="icon-card_right">
+                        <el-popover placement="left" trigger="click" min-width="50">
+                            <EditItem style="display: block" :item-detail="item"
+                                      v-on:update-item-success="handleUpdateItem"/>
+                            <TransferItem :item-detail="item.inventoryOrder" :selected-item="item" type="text"
+                                          button-text="Transfer Item"
+                                          v-on:transfer-item-success="getAllInventoryOrder"
+                                          v-on:transfered-item-id="deleteTransferedItemOnSelectedRowById"
+                            />
+                          <el-button icon="el-icon-more" type="text" slot="reference"></el-button>
+                        </el-popover>
+                      </span>
                       Serial Number: <strong>{{ item.serialNumberItem }}</strong>
                     </p>
                     <p>
@@ -93,8 +108,10 @@
         <el-table-column label="Configuration">
           <template slot-scope="props">
             <EditTransaction :item-detail="props.row" v-on:edit-success="getAllInventoryOrder"/>
-            <TransferItem :item-detail="props.row" v-on:transfer-item-success="getAllInventoryOrder"/>
-            <DeleteTransaction :inventory-order-id="props.row.inventoryOrderId" :invoice-number="props.row.invoiceNumber"
+            <TransferItem :item-detail="props.row" v-on:transfer-item-success="getAllInventoryOrder"
+                          icon="el-icon-truck" button-size="mini" tooltip-content="Transfer Mass Item"/>
+            <DeleteTransaction :inventory-order-id="props.row.inventoryOrderId"
+                               :invoice-number="props.row.invoiceNumber"
                                v-on:delete-transaction-success="getAllInventoryOrder"/>
           </template>
         </el-table-column>
@@ -125,6 +142,8 @@ export default {
   },
   data() {
     return {
+      isLoadingTransaction: false,
+      isLoadingItem: false,
       allTableData: [],
       filteredtableData: [],
       form: {},
@@ -135,32 +154,37 @@ export default {
     };
   },
   methods: {
+    deleteTransferedItemOnSelectedRowById(itemId){
+      console.log(itemId)
+    },
     handleUpdateItem(inventoryOrderId) {
       InventoryService.getAllItemById(inventoryOrderId).then(res => {
         this.itemInfoByInvoice = res.data
       })
     },
     onRowClick(data) {
-      let inventoryOrderId = data.inventoryOrderId
-      if (!this.itemInfoByInvoice.find(currentItem => currentItem.inventoryOrder.inventoryOrderId === inventoryOrderId)) {
+      const inventoryOrderId = data.inventoryOrderId
+      const obj = this.itemInfoByInvoice.find(currentItem => currentItem.inventoryOrder.inventoryOrderId === inventoryOrderId)
+      if (!obj) {
         InventoryService.getAllItemById(inventoryOrderId).then(res => {
           const items = res.data
           for (let item of items) {
-            if (!this.itemInfoByInvoice.find(currentItem => currentItem.itemId === item.itemId))
+            if (!this.itemInfoByInvoice.find(currentItem => currentItem.itemId === item.itemId) || !this.itemInfoByInvoice.find(currentItem => currentItem.inventoryOrder.inventoryOrderId === item.inventoryOrder.inventoryOrderId))
               this.itemInfoByInvoice.push(item)
           }
-          console.log(this.itemInfoByInvoice)
         })
       }
       this.$refs.filteredTableData.toggleRowExpansion(data);
     },
     getAllInventoryOrder() {
+      this.isLoadingTransaction = true
       InventoryService.getAllInventoryOrder().then(res => {
-        console.log(res.data)
+        console.log("getting all inventory order", res.data)
         this.allTableData = res.data
         this.filteredtableData = res.data.filter(data =>
             (data.from === this.branchName && !data.to) ||
             (data.to === this.branchName))
+        this.isLoadingTransaction = false
       }).catch(err => console.error(err))
     },
 
@@ -189,7 +213,8 @@ export default {
   font-size: 2em;
 }
 
-.icon-card_right{
+.icon-card_right {
   float: right;
+  transform: rotate(90deg);
 }
 </style>

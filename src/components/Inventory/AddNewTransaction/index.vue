@@ -122,7 +122,7 @@ export default {
           .then(res => {
             console.log(res)
             this.dialogTransaction = false
-            this.emit('new-transaction-created')
+            this.$emit('new-transaction-created')
           })
           .catch(err => console.error('something not right ', err))
     },

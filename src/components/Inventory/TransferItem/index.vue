@@ -1,10 +1,15 @@
 <template>
   <div style="display: inline-block; margin-right: 10px">
-    <el-tooltip class="item" effect="dark" content="Transfer Mass Item" placement="top" :hide-after="2000">
-      <el-button icon="el-icon-truck" @click="dialogVisible=true; getAllItemById()" size="mini">
+    <el-tooltip v-if="tooltipContent" class="item" effect="dark" :content="tooltipContent" placement="top"
+                :hide-after="2000">
+      <el-button :type="type" :icon="icon" @click="dialogVisible=true; getAllItemById()" :size="buttonSize">
+        {{ buttonText }}
       </el-button>
     </el-tooltip>
-    <el-dialog title="Transfer Item To Other Branches" :visible.sync="dialogVisible">
+    <el-button v-else :type="type" :icon="icon" @click="dialogVisible=true; getAllItemById()" :size="buttonSize">
+      {{ buttonText }}
+    </el-button>
+    <el-dialog title="Transfer Item To Other Branches" :visible.sync="dialogVisible" append-to-body>
       <p>Detail Item</p>
       <el-form ref="form" :model="form">
         <el-form-item>
@@ -15,30 +20,27 @@
             <el-option label="Semarang" value="SEMARANG"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="Invoice Number">
+          <el-input v-model="form.invoiceNumber"></el-input>
+        </el-form-item>
+        <el-form-item label="Journal Number">
+          <el-input v-model="form.jurnalNumber"></el-input>
+        </el-form-item>
+        <el-form-item label="InvoiceDate">
+          <el-date-picker v-model="form.invoiceDate"></el-date-picker>
+        </el-form-item>
+        <el-form-item label="Description">
+          <el-input type="textarea" v-model="form.description"></el-input>
+        </el-form-item>
         <el-form-item>
           <el-card>
-            <p>
-              Invoice Number: {{ form.invoiceNumber }}
-            </p>
-            <p>
-              Invoice Date: {{ form.invoiceDate.split("T")[0] }}
-            </p>
-            <p>
-              Journal number {{ form.invoiceNumber }}
-            </p>
-            <p>
-              Transaction Description : {{ form.description }}
-            </p>
-            <p>
-              Daftar Barang yang akan di transfer :
-            </p>
-              <el-row :gutter="10">
-                <el-col :span="12" v-for="(item, index) in itemList" :key="item.itemId">
+            <el-row :gutter="10">
+              <el-col :span="12" v-for="(item, index) in itemList" :key="item.itemId">
                   <span style="margin-left: 20px"><strong>{{ index + 1 }}.</strong> {{ item.serialNumberItem }} -
                     {{ item.itemName }}
                   </span>
-                </el-col>
-              </el-row>
+              </el-col>
+            </el-row>
           </el-card>
         </el-form-item>
         <el-form-item>
@@ -60,14 +62,18 @@ export default {
   name: "TransferItem",
   props: {
     itemDetail: Object,
+    selectedItem: Object,
+    icon: String,
+    type: String,
+    buttonText: String,
+    buttonSize: String,
+    tooltipContent: String,
   },
   data() {
     const {
       description,
       to,
       from,
-      inventoryOrderId,
-      invoiceDate,
       invoiceNumber,
       jurnalNumber,
       user,
@@ -75,12 +81,12 @@ export default {
     } = this.itemDetail
     return {
       dialogVisible: false,
+      itemRemainingInSelectedRow:null,
       itemList: [],
       form: {
         description,
         from: to || from,
-        inventoryOrderId,
-        invoiceDate: invoiceDate.split(" ").join("T"),
+        invoiceDate: null,
         invoiceNumber,
         itemId: [],
         jurnalNumber,
@@ -93,23 +99,54 @@ export default {
   },
   methods: {
     handleTransferItem() {
-      console.log(this.itemDetail)
+      console.log('itemDetail', this.itemDetail)
       let body = this.form
-      InventoryService.updateInventoryOrder(body)
+      InventoryService.addInventoryOrder(body)
           .then(res => {
-            console.log(res)
-            this.$emit('transfer-item-success')
+            console.log("new inventory order", res)
+            this.getItemAfterTransfer()
+
           })
           .catch(err => console.error("error when transfering data", err.response))
       this.dialogVisible = false
     },
+    deleteInventoryOrder() {
+      const inventoryOrderId = this.itemDetail.inventoryOrderId
+      InventoryService.deleteInventoryOrder(inventoryOrderId)
+          .then(res => {
+            console.log('transaction deleted...', res)
+            this.$emit('transfer-item-success')
+          })
+          .catch(err => console.error('delete transaction after no more item', err.response))
+    },
+    getItemAfterTransfer(){
+      let inventoryOrderId = this.itemDetail.inventoryOrderId
+      InventoryService.getAllItemById(inventoryOrderId).then(res=> {
+        this.itemRemainingInSelectedRow = res.data.length
+        console.log('item left at selected row:', this.itemRemainingInSelectedRow)
+        if (!this.itemRemainingInSelectedRow) {
+          console.log('deleting order because no more item')
+          this.deleteInventoryOrder()
+        } else {
+          this.$emit('transfer-item-success')
+          this.$emit('transfered-item-id',this.selectedItem.itemId)
+        }
+      }).catch(err=>console.error('get-item-after-transfer',err.response))
+    },
     getAllItemById() {
       let inventoryOrderId = this.itemDetail.inventoryOrderId
-      InventoryService.getAllItemById(inventoryOrderId).then(res => {
-        console.log(res.data)
-        this.itemList = res.data
-        this.form.itemId = res.data.map(data => data.itemId)
-      })
+      if (this.selectedItem) {
+        if (!this.itemList.find(currentItem => currentItem.id === this.selectedItem.Id)) {
+          this.form.itemId.push(this.selectedItem.itemId)
+          this.itemList.push(this.selectedItem)
+        }
+      } else {
+        InventoryService.getAllItemById(inventoryOrderId).then(res => {
+          console.log('getting all item by id', res.data)
+          this.itemList = res.data
+          this.form.itemId = res.data.map(data => data.itemId)
+        })
+      }
     },
   },
 }

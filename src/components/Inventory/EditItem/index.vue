@@ -1,7 +1,7 @@
 <template>
   <div style="display: inline-block">
-    <el-button type="text" style="padding-top: 0" @click="dialogVisible=true; getAllCategory()">edit</el-button>
-    <el-dialog :visible.sync="dialogVisible" title="Edit Transaction">
+    <el-button type="text" style="padding-top: 0" @click="dialogVisible=true; getAllCategory()">Edit</el-button>
+    <el-dialog :visible.sync="dialogVisible" title="Edit Transaction" append-to-body>
       <el-form label-position="top">
         <el-form-item label="Category">
           <el-select v-model="form.categoryId">
