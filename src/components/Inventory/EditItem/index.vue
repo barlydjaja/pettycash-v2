@@ -37,6 +37,10 @@ export default {
   name: "EditItem",
   props: {
     itemDetail: Object,
+    buttonType: String,
+    buttonIcon: String,
+    buttonText: String,
+    buttonSize: String,
   },
   data() {
     const {category, description, itemId, itemName, serialNumberItem} = this.itemDetail

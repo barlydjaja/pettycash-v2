@@ -76,6 +76,7 @@ export default {
       from,
       invoiceNumber,
       jurnalNumber,
+      inventoryOrderId,
       user,
       vendor,
     } = this.itemDetail
@@ -86,6 +87,7 @@ export default {
       form: {
         description,
         from: to || from,
+        inventoryOrderId,
         invoiceDate: null,
         invoiceNumber,
         itemId: [],

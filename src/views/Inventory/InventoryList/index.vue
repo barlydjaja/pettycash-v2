@@ -18,8 +18,6 @@
             <el-form-item prop="search" style="display: inline-block">
               <el-input placeholder="search" v-model="search" prefix-icon="el-icon-search"></el-input>
             </el-form-item>
-            <!--            testing tag to check search-->
-            <p>{{ search }}</p>
           </el-col>
         </el-row>
       </el-form>
@@ -28,7 +26,7 @@
       <el-table
           v-loading="isLoadingTransaction"
           ref="filteredTableData"
-          :data="filteredtableData"
+          :data="filteredtableData.filter(searchBasedOnKeyword)"
           :default-sort="{prop:'invoiceDate', order:'descending'}"
           @row-click="onRowClick"
           highlight-current-row
@@ -67,7 +65,7 @@
                   <el-card style="margin-bottom: 10px">
                     <p>
                       <span class="icon-card_right">
-                        <el-popover placement="left" trigger="click" min-width="50">
+                        <el-popover placement="left-start" trigger="click" min-width="50">
                             <EditItem style="display: block" :item-detail="item"
                                       v-on:update-item-success="handleUpdateItem"/>
                             <TransferItem :item-detail="item.inventoryOrder" :selected-item="item" type="text"
@@ -75,6 +73,7 @@
                                           v-on:transfer-item-success="getAllInventoryOrder"
                                           v-on:transfered-item-id="deleteTransferedItemOnSelectedRowById"
                             />
+                            <DeleteItem :item-id="item.itemId" button-text="Delete" button-type="text" style="display: block"></DeleteItem>
                           <el-button icon="el-icon-more" type="text" slot="reference"></el-button>
                         </el-popover>
                       </span>
@@ -129,6 +128,7 @@ import EditTransaction from "@/components/Inventory/EditTransaction"
 import DeleteTransaction from "@/components/Inventory/DeleteTransaction"
 import EditItem from "@/components/Inventory/EditItem"
 import EditVendor from "@/components/Inventory/EditVendor";
+import DeleteItem from "@/components/Inventory/DeleteItem"
 
 export default {
   name: "InventoryList",
@@ -139,6 +139,7 @@ export default {
     EditTransaction,
     DeleteTransaction,
     EditItem,
+    DeleteItem,
   },
   data() {
     return {
@@ -154,8 +155,10 @@ export default {
     };
   },
   methods: {
-    deleteTransferedItemOnSelectedRowById(itemId){
+    deleteTransferedItemOnSelectedRowById(itemId) {
       console.log(itemId)
+      const selectedItemIdIndex = this.itemInfoByInvoice.map(item => item.itemId).indexOf(itemId)
+      this.itemInfoByInvoice.splice(selectedItemIdIndex, 1)
     },
     handleUpdateItem(inventoryOrderId) {
       InventoryService.getAllItemById(inventoryOrderId).then(res => {
@@ -187,13 +190,20 @@ export default {
         this.isLoadingTransaction = false
       }).catch(err => console.error(err))
     },
-
     sortDataOnBranchChange() {
       this.filteredtableData = this.allTableData.filter(data =>
           (data.to === this.branchName) ||
           (data.from === this.branchName && !data.to)
       )
     },
+    searchBasedOnKeyword(data) {
+      return data.invoiceDate.includes(this.search) ||
+      data.invoiceNumber.toLowerCase().includes(this.search) ||
+      data.jurnalNumber.toLowerCase().includes(this.search) ||
+      data.user.username.toLowerCase().includes(this.search) ||
+      data.vendor.vendorName.toLowerCase().includes(this.search) ||
+      data.description.toLowerCase().includes(this.search)
+    }
   }
   ,
   created() {

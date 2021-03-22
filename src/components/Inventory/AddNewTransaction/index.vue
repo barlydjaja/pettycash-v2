@@ -8,8 +8,8 @@
       </el-button>
     </div>
     <el-dialog title="New Inventory Order/Transaction" :visible.sync="dialogTransaction">
-      <el-form ref="form" :model="form">
-        <el-form-item label="Invoice">
+      <el-form ref="ruleForm" :model="form" :rules="rules">
+        <el-form-item label="Invoice" prop="invoiceNumber">
           <el-row>
             <el-col :xl="6">
               <el-date-picker
@@ -23,24 +23,28 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="Journal Number">
+        <el-form-item label="Journal Number" prop="jurnalNumber">
           <el-input v-model="form.jurnalNumber"></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item prop="vendorId">
           <span>
             Vendor's Name
           </span>
           <span>
             <AddNewVendor v-on:new-vendor-added="getAllVendor"/>
           </span>
-          <el-autocomplete v-model="vendorName" :fetch-suggestions="querySearchVendor" placeholder="Vendor"
-                           @select="setVendorId"></el-autocomplete>
+          <el-select v-model="form.vendorId" filterable placeholder="select vendor">
+            <el-option v-for="vendor in vendorList"
+                       :key="vendor.vendorId"
+                       :label="vendor.vendorName"
+                       :value="vendor.vendorId"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="Description">
+        <el-form-item label="Description" prop="description">
           <el-input type="textarea" v-model="form.description"></el-input>
         </el-form-item>
         <el-form-item>
-          <AddNewItem/>
+          <AddNewItem button-type="text"/>
           <div class="item-list" v-for="item in createdItemList" :key="item.itemId">
             <el-button size="mini" plain>{{ item.serialNumberItem }} -
               {{ item.category.categoryName }} -
@@ -55,7 +59,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
     <el-button @click="handleCloseDialog">Cancel</el-button>
-    <el-button type="primary" @click="handleFormSubmit">Confirm</el-button>
+    <el-button type="primary" @click="handleFormSubmit('ruleForm')">Confirm</el-button>
   </span>
     </el-dialog>
   </div>
@@ -86,6 +90,20 @@ export default {
         from: storage.get('user').branch.branchName,
         userId: storage.get('user').userId
       },
+      rules: {
+        invoiceNumber: [
+          {required: true, message: 'Input Invoice Date & Number', trigger: 'change'}
+        ],
+        jurnalNumber: [
+          {required: true, message: 'Input Journal Number', trigger: 'blur'}
+        ],
+        description: [
+          {required: true, message: 'Input Description for this transaction', trigger: 'blur'}
+        ],
+        vendorId:[
+          {required: true, message: 'Please Choose/Add vendor', trigger:'change'}
+        ]
+      }
     }
   },
   methods: {
@@ -96,27 +114,12 @@ export default {
       console.log('getting vendor list...')
       InventoryService.getAllVendor().then(res => {
         console.log(res)
-        for (let vendor of res.data) {
-          if (!this.vendorList.find(addedVendor => addedVendor.vendorId === vendor.vendorId))
-            this.vendorList.push({value: vendor.vendorName, vendorId: vendor.vendorId})
-        }
+        this.vendorList = res.data
       }).catch(err => console.log(err))
     },
-    querySearchVendor(queryString, cb) {
-      let links = this.vendorList
-      let results = queryString ? links.filter(this.createFilterVendor(queryString)) : links
-
-      cb(results)
-    },
-    createFilterVendor(queryString) {
-      return link => {
-        return (link.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
-      }
-    },
-    setVendorId(vendor) {
-      this.form.vendorId = vendor.vendorId
-    },
-    handleFormSubmit() {
+    handleFormSubmit(formName) {
+      this.$refs[formName].validate((valid) => {
+        if(valid){
       let body = this.form
       InventoryService.addInventoryOrder(body)
           .then(res => {
@@ -124,7 +127,11 @@ export default {
             this.dialogTransaction = false
             this.$emit('new-transaction-created')
           })
-          .catch(err => console.error('something not right ', err))
+          .catch(err => console.error('handleFormSubmit', err))
+        } else{
+          return false
+        }
+      })
     },
     onDeleteItem(itemId) {
       this.isLoading = true
@@ -164,8 +171,5 @@ export default {
   width: 100%
 }
 
-.el-autocomplete {
-  display: block
-}
 
 </style>
